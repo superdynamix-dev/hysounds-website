@@ -1,0 +1,50 @@
+# HySounds — Hytale Sound Catalog
+# https://hysounds.com/
+
+## What is HySounds?
+HySounds is a free reference tool that catalogs all 753 built-in Hytale sound IDs. It allows Hytale modders and server administrators to search, filter, and copy sound commands.
+
+## Key Facts
+- Total sounds: 753 unique sound IDs
+- Categories: Creatures (357), Blocks (134), Weapons (116), UI/Environment (48), Magic (46), Crafting (31), Player (21)
+- Action types: Death/Despawn, Hurt/Impact, Alerted/Idle, Spawn/Wake, Walk/Run, Attack/Swing, Loops/Ambient
+- Copy formats: /sound 2d [ID], /sound 3d [ID] ~ ~ ~, JSON SoundEventId
+
+## How to play sounds in Hytale
+Use the built-in server commands:
+- /sound 2d SFX_Wolf_Death — plays a 2D (global/UI) sound
+- /sound 3d SFX_Wolf_Death ~ ~ ~ — plays a 3D (positional) sound at coordinates
+- Add --all flag to play for all online players
+
+## Sound ID Format
+All Hytale sound IDs follow the pattern: SFX_[Entity]_[Action]
+Examples:
+- SFX_Wolf_Death — Wolf death sound
+- SFX_Skeleton_Spawn_1 — Skeleton spawn sound variant 1
+- SFX_Golem_Earth_Wake — Earth Golem waking up
+- SFX_Portal_Neutral_Open — Neutral portal opening
+- SFX_Divine_Respawn — Divine respawn effect
+- SFX_Avatar_Powers_Enable — Avatar powers activation
+
+## Creature Subcategories
+- Passive Animals: Antelope, Bunny, Camel, Chicken, Cow, Deer, Duck, Fox, Frog, Horse, Pig, Rabbit, Sheep, etc.
+- Hostile Mobs: Goblin, Hyena, Scorpion, Snake, Spider, Trork, Wolf, Crocodile, Emberwulf, etc.
+- Undead: Skeleton, Skeleton Mage, Skeleton Praetorian, Zombie
+- Void Creatures: Crawler Void, Eye Void, Spawn Void, Spark Living
+- Bosses & Elites: Golem Earth, Golem Firesteel, Golem Frost, Golem Sand, Yeti, Klops
+- Nature & Elemental: Spirit Root, Hedera, Feran, Larva, Scarak Fighter, Scarak Seeker
+
+## Using sounds in Hytale mods
+In NPC role JSON configs, use sound fields:
+- "WorldSoundEventId": "SFX_Name" — all nearby players hear it
+- "LocalSoundEventId": "SFX_Name" — only the triggering player hears it
+- "HitSoundEventId", "DeathSoundEventId", "DespawnSoundEventId" — event-specific
+
+## Sister Site
+- HySpawns — Hytale Spawn Catalog: https://hyspawns.com/
+
+## About
+Built by Scruby Companion
+- CurseForge: https://www.curseforge.com/hytale/mods/scruby-companion
+- Source: https://github.com/superdynamix-dev/hysounds-website
+- License: All Rights Reserved

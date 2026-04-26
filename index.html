@@ -1,0 +1,3233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HySounds - Hytale Sound Catalog</title>
+  <meta name="description" content="Searchable reference for all 885 Hytale built-in sounds. Filter by action, source, or entity. Copy /sound commands with one click.">
+  <meta property="og:title" content="HySounds - All Hytale Sound IDs">
+  <meta property="og:description" content="Every Hytale sound ID, searchable and copyable. Free community tool by Scruby Companion.">
+  <meta property="og:type" content="website">
+  <link rel="canonical" href="https://hysounds.com/">
+  <meta property="og:url" content="https://hysounds.com/">
+  <meta property="og:site_name" content="HySounds">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="HySounds - All Hytale Sound IDs">
+  <meta name="twitter:description" content="Every Hytale sound ID, searchable and copyable. Free community tool.">
+  <meta name="robots" content="index, follow">
+  <meta name="author" content="Scruby Companion">
+  <meta name="keywords" content="hytale sounds, hytale sound ids, hytale modding, hytale sound catalog, hytale sound list, hytale sound commands, hytale server sounds, hytale sfx">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "HySounds - Hytale Sound Catalog",
+    "url": "https://hysounds.com/",
+    "description": "Searchable reference for all Hytale built-in sound IDs. Filter by action, source, or entity. Copy /sound commands with one click.",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+    "author": {"@type": "Organization", "name": "Scruby Companion", "url": "https://www.curseforge.com/hytale/mods/scruby-companion"}
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How do I play sounds in Hytale?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Use the built-in server commands: /sound 2d [SFX_ID] for global sounds, or /sound 3d [SFX_ID] ~ ~ ~ for positional sounds. Add --all to play for all online players. Example: /sound 2d SFX_Wolf_Death"
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How many sounds does Hytale have?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Hytale has 753 unique built-in sound IDs across 7 categories: Creatures (357), Blocks (134), Weapons (116), UI/Environment (48), Magic (46), Crafting (31), and Player (21)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the format of Hytale sound IDs?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "All Hytale sound IDs follow the pattern SFX_[Entity]_[Action]. For example: SFX_Wolf_Death, SFX_Skeleton_Spawn_1, SFX_Golem_Earth_Wake. They can be used with /sound 2d or /sound 3d commands, or in NPC role JSON configs as WorldSoundEventId or LocalSoundEventId."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I add custom sounds to a Hytale mod?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "In Hytale NPC role JSON configs, use these fields: WorldSoundEventId (all nearby players hear it), LocalSoundEventId (only triggering player), HitSoundEventId, DeathSoundEventId, and DespawnSoundEventId. Reference built-in sounds by their SFX_ ID. The PlaySoundPage API can be used in Java plugins for programmatic sound playback."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is HySounds?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "HySounds is a free, open-source reference tool that catalogs all 753 built-in Hytale sound IDs. It features search, filtering by action type and source category, one-click copy in multiple formats, dark/light mode, and works offline as a single HTML file."
+        }
+      }
+    ]
+  }
+  </script>
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/favicon.png">
+  <style>
+    /* ===== RESET ===== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* ===== DESIGN TOKENS ===== */
+    :root {
+      /* Backgrounds */
+      --bg: #131316;
+      --bg2: #1a1a1f;
+      --bg3: #212127;
+      --bg-hover: rgba(255,255,255,0.04);
+      --bg-active: rgba(255,255,255,0.07);
+
+      /* Borders */
+      --border: rgba(255,255,255,0.08);
+      --border-h: rgba(255,255,255,0.14);
+
+      /* Text */
+      --t1: rgba(255,255,255,0.95);
+      --t2: rgba(255,255,255,0.68);
+      --t3: rgba(255,255,255,0.42);
+
+      /* Semantic colors */
+      --mono: #e2e8f0;
+      --accent: #06b6d4;
+      --accent-dim: rgba(6,182,212,0.12);
+      --success: #22c55e;
+      --coffee: #ffdd00;
+
+      /* Action colors */
+      --death: #ef4444;
+      --hurt: #f59e0b;
+      --alert: #f97316;
+      --spawn: #22c55e;
+      --walk: #6b7280;
+      --attack: #3b82f6;
+      --loop: #a855f7;
+      --misc: #8b5cf6;
+
+      /* Source / category colors */
+      --cat-creature: #22c55e;
+      --cat-weapon: #3b82f6;
+      --cat-magic: #a855f7;
+      --cat-block: #6b7280;
+      --cat-player: #f59e0b;
+      --cat-ui: #f0c040;
+      --cat-crafting: #ef4444;
+
+      /* Font stacks */
+      --font-sans: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      --font-mono: 'Cascadia Code', 'Consolas', 'SF Mono', monospace;
+    }
+
+    /* ===== LIGHT THEME ===== */
+    [data-theme="light"] {
+      --bg: #f4f4f7;
+      --bg2: #ffffff;
+      --bg3: #e8eaef;
+      --bg-hover: rgba(0,0,0,0.03);
+      --bg-active: rgba(0,0,0,0.06);
+      --border: rgba(0,0,0,0.10);
+      --border-h: rgba(0,0,0,0.18);
+      --t1: #0a0f1a;
+      --t2: #3b4252;
+      --t3: #6b7688;
+      --mono: #1a1f2e;
+      --accent: #0782a0;
+      --accent-dim: rgba(7,130,160,0.10);
+      --success: #148a3a;
+      --coffee: #8a5200;
+    }
+
+    /* Light-mode action tags — refined for white backgrounds */
+    [data-theme="light"] .action-tag.death { color: #991b1b; background: rgba(220,38,38,0.12); }
+    [data-theme="light"] .action-tag.hurt { color: #92400e; background: rgba(217,119,6,0.12); }
+    [data-theme="light"] .action-tag.alert { color: #9a3412; background: rgba(234,88,12,0.12); }
+    [data-theme="light"] .action-tag.spawn { color: #166534; background: rgba(22,163,74,0.12); }
+    [data-theme="light"] .action-tag.walk { color: #374151; background: rgba(75,85,99,0.12); }
+    [data-theme="light"] .action-tag.attack { color: #1e40af; background: rgba(37,99,235,0.12); }
+    [data-theme="light"] .action-tag.loop { color: #6b21a8; background: rgba(147,51,234,0.12); }
+    [data-theme="light"] .action-tag.misc { color: #5b21b6; background: rgba(124,58,237,0.12); }
+
+    /* Light-mode action group header tints — more visible on white */
+    [data-theme="light"] .action-group[data-action="death"] .action-group-header { background: rgba(239,68,68,0.07); }
+    [data-theme="light"] .action-group[data-action="hurt"] .action-group-header { background: rgba(245,158,11,0.07); }
+    [data-theme="light"] .action-group[data-action="alert"] .action-group-header { background: rgba(249,115,22,0.07); }
+    [data-theme="light"] .action-group[data-action="spawn"] .action-group-header { background: rgba(34,197,94,0.07); }
+    [data-theme="light"] .action-group[data-action="walk"] .action-group-header { background: rgba(107,114,128,0.07); }
+    [data-theme="light"] .action-group[data-action="attack"] .action-group-header { background: rgba(59,130,246,0.07); }
+    [data-theme="light"] .action-group[data-action="loop"] .action-group-header { background: rgba(168,85,247,0.07); }
+    [data-theme="light"] .action-group[data-action="misc"] .action-group-header { background: rgba(139,92,246,0.07); }
+
+    /* Light-mode copy icon */
+    [data-theme="light"] .copy-icon { color: rgba(0,0,0,0.18); }
+    [data-theme="light"] .sound-row:hover .copy-icon { color: rgba(0,0,0,0.4); }
+    [data-theme="light"] .copy-icon:hover { color: var(--accent) !important; }
+
+    /* Light-mode scrollbar */
+    [data-theme="light"] .main::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); }
+    [data-theme="light"] .main::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.18); }
+
+    /* Light-mode toast */
+    [data-theme="light"] .toast { box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+
+    /* Light-mode BMC button — darker amber for visibility on white */
+    [data-theme="light"] .bmc-fixed { color: #92400e; border-color: rgba(161,98,7,0.2); }
+    [data-theme="light"] .bmc-fixed:hover { box-shadow: 0 0 12px rgba(161,98,7,0.2); background: rgba(161,98,7,0.06); }
+
+    /* Light-mode copy popup */
+    [data-theme="light"] .copy-popup { box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+
+    /* Light-mode mobile sidebar shadow */
+    [data-theme="light"] .sidebar.open { box-shadow: 4px 0 20px rgba(0,0,0,0.12); }
+
+    /* Light-mode entity tag — restore to theme variable */
+    [data-theme="light"] .entity-tag { color: var(--t3); }
+    /* Light-mode entity label — restore */
+    [data-theme="light"] .entity-label { color: var(--t3); }
+
+    /* Light-mode SFX name — heavier weight for code readability */
+    [data-theme="light"] .sfx { font-weight: 600; }
+
+    /* Light-mode sound rows — subtle separation */
+    [data-theme="light"] .sound-row { border-bottom: 1px solid rgba(0,0,0,0.04); }
+    [data-theme="light"] .sound-row:hover { background: rgba(0,0,0,0.02); }
+
+    /* Light-mode header — subtle depth shadow */
+    [data-theme="light"] .header { box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+
+    /* Light-mode sidebar — refined border */
+    [data-theme="light"] .sidebar { border-right-color: rgba(0,0,0,0.08); }
+
+    /* Light-mode sidebar active item — clear accent highlight */
+    [data-theme="light"] .sidebar-item.active { background: var(--accent-dim); color: var(--accent); }
+    [data-theme="light"] .sidebar-item:hover { background: rgba(0,0,0,0.03); }
+
+    /* Light-mode search bar — recessed with visible border */
+    [data-theme="light"] .search-input { background: var(--bg3); border-color: rgba(0,0,0,0.08); }
+    [data-theme="light"] .search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim); }
+
+    /* Light-mode header "by" link hover */
+    [data-theme="light"] .header-by a:hover { color: #0e7490; }
+
+    /* ===== THEME TOGGLE BUTTON ===== */
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: auto;
+      height: auto;
+      font-size: 13px;
+      color: var(--t2);
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 3px 10px;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+      line-height: 1;
+      font-family: var(--font-sans);
+    }
+    .theme-toggle:hover { border-color: var(--border-h); color: var(--t1); }
+
+    /* ===== BASE ===== */
+    html { font-size: 16px; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--t1);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow: hidden;
+    }
+
+    /* ===== LAYOUT ===== */
+    .layout {
+      display: grid;
+      grid-template-columns: 232px 1fr;
+      grid-template-rows: 52px 1fr;
+      height: 100vh;
+    }
+
+    /* ===== HEADER ===== */
+    .header {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 16px;
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      z-index: 40;
+      height: 52px;
+      min-height: 52px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .hamburger {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--t2);
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.15s;
+    }
+    .hamburger:hover { border-color: var(--border-h); color: var(--t1); }
+
+    .logo-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, #06b6d4, #a855f7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+
+    h1.logo-text {
+      margin: 0;
+      padding: 0;
+      line-height: inherit;
+    }
+    .logo-text {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--t1);
+      white-space: nowrap;
+    }
+
+    .logo-subtitle {
+      font-size: 10px;
+      font-weight: 400;
+      color: var(--t3);
+      display: block;
+      margin-top: -2px;
+    }
+
+    .header-by {
+      font-size: 12px;
+      color: var(--t3);
+      white-space: nowrap;
+    }
+    .header-by a {
+      color: var(--accent);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .header-by a:hover { color: #22d3ee; }
+
+    /* Search container */
+    .header-center {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      padding: 0 20px;
+      min-width: 0;
+    }
+
+    .search-container {
+      position: relative;
+      width: 100%;
+      max-width: 480px;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 13px;
+      color: var(--t3);
+      pointer-events: none;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 7px 70px 7px 34px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--t1);
+      font-family: var(--font-sans);
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .search-input::placeholder { color: var(--t3); }
+    .search-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-dim), 0 0 12px rgba(6,182,212,0.08);
+    }
+
+    .search-kbd {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      pointer-events: none;
+    }
+    .search-kbd kbd {
+      font-family: var(--font-sans);
+      font-size: 10px;
+      color: var(--t3);
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1px 5px;
+      line-height: 1.4;
+    }
+
+    /* Header right */
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .counter-badge {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--t2);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 3px 10px;
+      white-space: nowrap;
+    }
+
+    .gh-link {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--t2);
+      text-decoration: none;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 3px 10px;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .gh-link:hover { border-color: var(--border-h); color: var(--t1); }
+    .gh-link svg { width: 14px; height: 14px; fill: currentColor; }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar {
+      background: var(--bg2);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 12px 0;
+      scrollbar-width: none;
+    }
+    .sidebar::-webkit-scrollbar { display: none; }
+
+    .sidebar-label {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--t3);
+      padding: 8px 16px 4px;
+    }
+
+    .sidebar-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 8px 12px;
+    }
+
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: 6px;
+      margin: 0 6px;
+      font-size: 12.5px;
+      color: var(--t2);
+      cursor: pointer;
+      transition: all 0.12s;
+      user-select: none;
+    }
+    .sidebar-item:hover { background: var(--bg-hover); color: var(--t1); }
+    .sidebar-item.active { background: var(--accent-dim); color: var(--t1); }
+
+    .sidebar-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .sidebar-count {
+      margin-left: auto;
+      font-size: 10px;
+      color: var(--t3);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .sidebar-item.active .sidebar-count { color: var(--t2); }
+
+    /* Copy format items */
+    .sidebar-format {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: 6px;
+      margin: 0 6px;
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: var(--t2);
+      cursor: pointer;
+      transition: all 0.12s;
+      user-select: none;
+    }
+    .sidebar-format:hover { background: var(--bg-hover); color: var(--t1); }
+    .sidebar-format.active { background: var(--accent-dim); color: var(--accent); }
+
+    .sidebar-radio {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 2px solid var(--t3);
+      flex-shrink: 0;
+      position: relative;
+    }
+    .sidebar-format.active .sidebar-radio {
+      border-color: var(--accent);
+    }
+    .sidebar-format.active .sidebar-radio::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    .main {
+      padding: 20px 28px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      background: var(--bg);
+    }
+
+    /* ===== VIEW BAR ===== */
+    .view-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .view-toggle {
+      display: inline-flex;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .view-btn {
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--t2);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: var(--font-sans);
+    }
+    .view-btn:hover { color: var(--t1); background: var(--bg-hover); }
+    .view-btn.active {
+      color: var(--t1);
+      background: var(--bg-active);
+    }
+    .view-btn + .view-btn { border-left: 1px solid var(--border); }
+
+    .view-info {
+      font-size: 12px;
+      color: var(--t3);
+    }
+
+    /* ===== SOURCE FILTER PILLS ===== */
+    .cat-pills {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .cat-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 12px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--t2);
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.15s;
+      user-select: none;
+      font-family: var(--font-sans);
+    }
+    .cat-pill:hover { border-color: var(--border-h); color: var(--t1); }
+    .cat-pill.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+
+    .cat-pill-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+
+    .cat-pill-count {
+      font-size: 10px;
+      color: var(--t3);
+    }
+    .cat-pill.active .cat-pill-count { color: var(--accent); opacity: 0.7; }
+
+    /* ===== CONTENT AREA ===== */
+    #content {
+      min-height: 200px;
+    }
+
+    /* ===== ACTION GROUP HEADERS ===== */
+    .action-group {
+      margin-bottom: 4px;
+    }
+
+    .action-group-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.12s;
+      user-select: none;
+    }
+    .action-group-header:hover { background: var(--bg-hover); }
+
+    .action-group-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .action-group-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--t1);
+    }
+
+    .action-group-count {
+      font-size: 11px;
+      color: var(--t3);
+      margin-left: 4px;
+    }
+
+    .action-group-chevron {
+      margin-left: auto;
+      color: var(--t3);
+      transition: transform 0.2s ease;
+      display: inline-flex;
+    }
+    .action-group-chevron svg { width: 14px; height: 14px; }
+    .action-group.collapsed .action-group-chevron { transform: rotate(-90deg); }
+
+    .action-group-body {
+      overflow: hidden;
+      transition: max-height 0.2s ease;
+    }
+
+    /* Action group tints */
+    .action-group[data-action="death"] .action-group-header { background: rgba(239,68,68,0.06); }
+    .action-group[data-action="hurt"] .action-group-header { background: rgba(245,158,11,0.06); }
+    .action-group[data-action="alert"] .action-group-header { background: rgba(249,115,22,0.06); }
+    .action-group[data-action="spawn"] .action-group-header { background: rgba(34,197,94,0.06); }
+    .action-group[data-action="walk"] .action-group-header { background: rgba(107,114,128,0.06); }
+    .action-group[data-action="attack"] .action-group-header { background: rgba(59,130,246,0.06); }
+    .action-group[data-action="loop"] .action-group-header { background: rgba(168,85,247,0.06); }
+    .action-group[data-action="misc"] .action-group-header { background: rgba(139,92,246,0.06); }
+
+    /* ===== ENTITY LABELS ===== */
+    .entity-label {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--t2);
+      padding: 12px 12px 4px;
+    }
+
+    /* ===== SOUND ROWS ===== */
+    .sound-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 6px;
+      border-left: 3px solid transparent;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      transition: all 0.15s ease;
+      cursor: pointer;
+      margin-bottom: 0;
+    }
+    .sound-row:hover { background: rgba(255,255,255,0.05); border-left-color: var(--accent); }
+
+    .sfx {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--mono);
+      white-space: nowrap;
+    }
+
+    .copy-icon {
+      color: rgba(255,255,255,0.25);
+      cursor: pointer;
+      transition: color 0.15s;
+      display: inline-flex;
+      flex-shrink: 0;
+      padding: 2px;
+    }
+    .copy-icon svg { width: 13px; height: 13px; }
+    .sound-row:hover .copy-icon { color: rgba(255,255,255,0.45); }
+    .copy-icon:hover { color: var(--accent) !important; }
+    .copy-icon.copied { color: var(--success) !important; }
+
+    /* ===== ACTION TAGS ===== */
+    .action-tag {
+      display: inline-flex;
+      align-items: center;
+      font-size: 9px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 2px 6px;
+      border-radius: 4px;
+      flex-shrink: 0;
+      line-height: 1.3;
+    }
+
+    .action-tag.death { color: var(--death); background: rgba(239,68,68,0.12); }
+    .action-tag.hurt { color: var(--hurt); background: rgba(245,158,11,0.12); }
+    .action-tag.alert { color: var(--alert); background: rgba(249,115,22,0.12); }
+    .action-tag.spawn { color: var(--spawn); background: rgba(34,197,94,0.12); }
+    .action-tag.walk { color: var(--walk); background: rgba(107,114,128,0.15); }
+    .action-tag.attack { color: var(--attack); background: rgba(59,130,246,0.12); }
+    .action-tag.loop { color: var(--loop); background: rgba(168,85,247,0.12); }
+    .action-tag.misc { color: var(--misc); background: rgba(139,92,246,0.12); }
+
+    /* ===== ENTITY TAGS ===== */
+    .entity-tag {
+      font-size: 10px;
+      color: rgba(255,255,255,0.45);
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    /* ===== EMPTY STATE ===== */
+    .empty-state {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px;
+      text-align: center;
+    }
+    .empty-state.visible { display: flex; }
+
+    .empty-state-icon {
+      font-size: 40px;
+      margin-bottom: 16px;
+      opacity: 0.3;
+    }
+
+    .empty-state-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--t2);
+      margin-bottom: 8px;
+    }
+
+    .empty-state-text {
+      font-size: 13px;
+      color: var(--t3);
+      margin-bottom: 20px;
+      max-width: 360px;
+    }
+
+    .empty-state-suggestions {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .suggestion-pill {
+      font-size: 11px;
+      color: var(--t2);
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 4px 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: var(--font-sans);
+    }
+    .suggestion-pill:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ===== TOAST ===== */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--bg3);
+      border: 1px solid var(--border-h);
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 12px;
+      color: var(--t1);
+      font-family: var(--font-mono);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      pointer-events: none;
+      z-index: 100;
+      max-width: 420px;
+    }
+    .toast.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ===== BUY ME A COFFEE BUTTON ===== */
+    .bmc-fixed {
+      position: fixed;
+      bottom: 16px;
+      right: 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--coffee);
+      text-decoration: none;
+      transition: all 0.15s;
+      z-index: 50;
+    }
+    .bmc-fixed:hover {
+      border-color: var(--coffee);
+      box-shadow: 0 0 12px rgba(255,221,0,0.15);
+    }
+
+    /* ===== CONTEST BANNER ===== */
+    .contest-banner {
+      display:flex; align-items:center; justify-content:center; gap:14px;
+      background:linear-gradient(135deg, rgba(240,192,64,0.08), rgba(6,182,212,0.08));
+      border:1px solid rgba(240,192,64,0.15); border-radius:8px;
+      padding:12px 16px; margin-bottom:16px;
+      text-align:center;
+    }
+    .banner-trophy { font-size:24px; flex-shrink:0; }
+    .banner-text { flex:1; text-align:center; }
+    .banner-text h3 { font-size:13px; font-weight:700; color:#f0c040; margin-bottom:2px; }
+    .banner-text p { font-size:11.5px; color:var(--t2); line-height:1.4; }
+    .banner-text p strong { color:var(--t1); }
+    .banner-cta {
+      display:inline-flex; align-items:center; gap:6px;
+      padding:8px 18px; border-radius:7px;
+      background:linear-gradient(135deg, #f0c040, #e8a000);
+      color:#000; font-size:12px; font-weight:700;
+      text-decoration:none; white-space:nowrap; transition:all 0.15s;
+    }
+    .banner-cta:hover { transform:translateY(-1px); box-shadow:0 4px 16px rgba(240,192,64,0.25); }
+    .banner-close {
+      color:var(--t3); cursor:pointer; font-size:18px; padding:4px 8px;
+      background:none; border:none; transition:color 0.15s; flex-shrink:0;
+    }
+    .banner-close:hover { color:var(--t1); }
+    .contest-banner.hidden { display:none; }
+
+    /* ===== SUBCATEGORY HEADERS (all sources) ===== */
+    .subcat-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px 6px;
+      margin-top: 16px;
+      border-left: 3px solid var(--subcat-color, var(--cat-creature));
+      cursor: default;
+      user-select: none;
+    }
+    .subcat-header:first-child { margin-top: 0; }
+
+    .subcat-header-icon {
+      font-size: 14px;
+      flex-shrink: 0;
+      width: 20px;
+      text-align: center;
+    }
+
+    .subcat-header-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--t1);
+    }
+
+    .subcat-header-count {
+      font-size: 10px;
+      color: var(--t3);
+      font-weight: 400;
+    }
+
+    /* Subcategory pills (shown when any source with subcats is active) */
+    .subcat-pills {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .subcat-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 10px;
+      font-size: 10.5px;
+      font-weight: 500;
+      color: var(--t2);
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all 0.15s;
+      user-select: none;
+      font-family: var(--font-sans);
+    }
+    .subcat-pill:hover { border-color: var(--border-h); color: var(--t1); }
+    .subcat-pill.active { background: var(--subcat-active-bg, rgba(34,197,94,0.10)); border-color: var(--subcat-color, var(--cat-creature)); color: var(--subcat-color, var(--cat-creature)); }
+
+    .subcat-pill-count {
+      font-size: 9px;
+      color: var(--t3);
+    }
+    .subcat-pill.active .subcat-pill-count { color: var(--subcat-color, var(--cat-creature)); opacity: 0.7; }
+
+    /* Subcategory labels inside action groups */
+    .subcat-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px 3px;
+      margin-top: 8px;
+      border-left: 2px solid var(--subcat-color, var(--cat-creature));
+      user-select: none;
+    }
+    .subcat-label:first-child { margin-top: 0; }
+
+    .subcat-label-icon {
+      font-size: 11px;
+      flex-shrink: 0;
+      width: 16px;
+      text-align: center;
+    }
+
+    .subcat-label-title {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--subcat-color, var(--cat-creature));
+    }
+
+    .subcat-label-count {
+      font-size: 9px;
+      color: var(--t3);
+    }
+
+    /* ===== FOOTER ===== */
+    .footer {
+      padding: 32px 0 16px;
+      border-top: 1px solid var(--border);
+      margin-top: 32px;
+      font-size: 11px;
+      color: var(--t3);
+      line-height: 1.7;
+    }
+    .footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .footer a:hover { text-decoration: underline; }
+
+    /* ===== COPY POPUP (mobile long-press) ===== */
+    .copy-popup {
+      position:fixed; z-index:200;
+      background:var(--bg3); border:1px solid var(--border);
+      border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,0.5);
+      overflow:hidden; min-width:160px;
+    }
+    .copy-popup-item {
+      padding:10px 14px; font-size:13px; color:var(--t2);
+      cursor:pointer; transition:background 0.1s;
+    }
+    .copy-popup-item:hover, .copy-popup-item:active {
+      background:var(--bg-hover); color:var(--t1);
+    }
+
+    /* ===== SCROLLBAR (main area) ===== */
+    .main::-webkit-scrollbar { width: 6px; }
+    .main::-webkit-scrollbar-track { background: transparent; }
+    .main::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 3px; }
+    .main::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.14); }
+
+    /* ===== REDUCED MOTION ===== */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+      }
+    }
+
+    /* ===== RESPONSIVE: MOBILE ===== */
+    @media (max-width: 768px) {
+      /* --- Layout: single column --- */
+      .layout {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+      }
+
+      /* --- Sidebar: off-canvas --- */
+      .sidebar {
+        display: none;
+      }
+      .sidebar.open {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 260px;
+        height: 100vh;
+        z-index: 50;
+        padding-top: 60px;
+        box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+      }
+
+      /* --- Hamburger visible --- */
+      .hamburger {
+        display: flex;
+        order: 0;
+      }
+
+      /* --- Header: wrap into 2 rows --- */
+      .header {
+        flex-wrap: wrap;
+        height: auto;
+        min-height: auto;
+        padding: 8px 12px;
+        gap: 8px;
+      }
+
+      .header-left {
+        order: 1;
+        gap: 8px;
+      }
+
+      /* Hide non-essential header elements */
+      .logo-subtitle { display: none; }
+      .header-by { display: none; }
+      .counter-badge { display: none; }
+      .gh-link { display: none; }
+
+      /* Theme toggle always visible, pushed right */
+      .header-right {
+        order: 2;
+        margin-left: auto;
+      }
+
+      /* Search bar: full width second row */
+      .header-center {
+        order: 10;
+        width: 100%;
+        flex-basis: 100%;
+        padding: 0;
+      }
+
+      .search-container {
+        max-width: 100%;
+      }
+
+      .search-input {
+        width: 100%;
+        padding-right: 12px;
+      }
+
+      .search-kbd { display: none; }
+
+      /* --- Main content: tighter padding --- */
+      .main {
+        padding: 12px 10px;
+      }
+
+      /* --- Sound rows: prevent overflow --- */
+      .sound-row {
+        padding: 10px 8px;
+        gap: 6px;
+      }
+
+      .sfx {
+        font-size: 11px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 55vw;
+        min-width: 0;
+      }
+
+      /* Hide entity tags on mobile to save space */
+      .entity-tag { display: none; }
+
+      /* --- Filter pills: horizontal scroll --- */
+      .cat-pills {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding-bottom: 4px;
+      }
+      .cat-pills::-webkit-scrollbar { display: none; }
+
+      /* Subcategory pills also scroll */
+      .subcat-pills {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding-bottom: 4px;
+      }
+      .subcat-pills::-webkit-scrollbar { display: none; }
+
+      /* --- View bar: wrap and hide info text --- */
+      .view-bar {
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .view-info { display: none; }
+
+      /* --- Toast: fit mobile width --- */
+      .toast {
+        left: 12px;
+        right: 12px;
+        max-width: none;
+        bottom: 16px;
+      }
+
+      /* --- BMC button: smaller on mobile --- */
+      .bmc-fixed {
+        bottom: 8px;
+        right: 8px;
+        padding: 6px 10px;
+        font-size: 10px;
+      }
+
+      /* --- Contest banner: stack vertically --- */
+      .contest-banner { flex-direction: column; text-align: center; gap: 10px; }
+      .banner-cta { width: 100%; justify-content: center; }
+
+      /* --- Action group headers: tighter on mobile --- */
+      .action-group-header {
+        padding: 8px 8px;
+        gap: 6px;
+      }
+
+      /* --- Copy popup: full width on mobile --- */
+      .copy-popup {
+        left: 12px !important;
+        right: 12px !important;
+        width: auto !important;
+      }
+
+      /* --- Prevent any horizontal overflow --- */
+      html, body {
+        overflow-x: hidden;
+        max-width: 100vw;
+      }
+    }
+
+    /* ===== SITE SWITCHER ===== */
+    .site-switcher { position: relative; display: inline-flex; align-items: center; gap: 10px; }
+    .ss-btn {
+      display: inline-flex; align-items: stretch; cursor: pointer; border-radius: 7px;
+      overflow: hidden; height: 32px; border: none; background: none; padding: 0;
+    }
+    .ss-btn-label {
+      font-size: 13px; font-weight: 700; color: var(--t1); padding: 0 10px;
+      display: flex; align-items: center; background: var(--accent-dim);
+      font-family: var(--font-sans);
+    }
+    .ss-btn-chevron {
+      width: 28px; display: flex; align-items: center; justify-content: center;
+      background: rgba(6,182,212,0.25); transition: background 0.15s;
+    }
+    .ss-btn:hover .ss-btn-chevron { background: rgba(6,182,212,0.35); }
+    .ss-btn-chevron svg { width: 10px; height: 10px; color: var(--accent); transition: transform 0.2s; }
+    .site-switcher-menu.open + .ss-btn .ss-btn-chevron svg,
+    .site-switcher.open .ss-btn-chevron svg { transform: rotate(180deg); }
+    .site-switcher-menu {
+      display: none; position: absolute; top: calc(100% + 5px); left: 0; right: 0;
+      flex-direction: column; background: var(--bg2); border-radius: 8px; overflow: hidden;
+      border: 1px solid var(--border); z-index: 100;
+    }
+    .site-switcher-menu.open { display: flex; }
+    .ss-row {
+      padding: 8px 10px; display: flex; align-items: center; gap: 7px;
+      text-decoration: none; transition: background 0.15s; cursor: pointer;
+    }
+    .ss-row:hover { background: var(--bg-hover); }
+    .ss-icon {
+      width: 24px; height: 24px; border-radius: 6px;
+      display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0;
+    }
+    .ss-name { font-size: 12px; font-weight: 600; }
+    .ss-count { font-size: 9px; color: var(--t3); }
+    [data-theme="light"] .site-switcher-menu { box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+  </style>
+</head>
+<body>
+<div class="contest-banner" id="contest-banner">
+  <span class="banner-trophy">🏆</span>
+  <span>Built for the <strong>Hytale New Worlds Modding Contest 2026</strong></span>
+  <a href="https://www.curseforge.com/hytale/mods/scruby-companion" class="banner-cta">See Our Entry →</a>
+  <button class="banner-close" id="banner-close" aria-label="Close banner">✕</button>
+</div>
+  <div class="layout">
+
+    <!-- ===== HEADER ===== -->
+    <header class="header">
+      <div class="header-left">
+        <button class="hamburger" id="hamburger" aria-label="Toggle sidebar">&#9776;</button>
+        <div class="site-switcher" id="site-switcher">
+          <div class="logo-icon" aria-hidden="true">&#9835;</div>
+          <button class="ss-btn" id="ss-btn" aria-label="Switch site">
+            <span class="ss-btn-label">HySounds</span>
+            <span class="ss-btn-chevron"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 6l4 4 4-4"/></svg></span>
+          </button>
+          <div class="site-switcher-menu" id="ss-menu">
+            <a class="ss-row" href="https://hyspawns.com" rel="noopener" style="border-left:4px solid rgba(249,115,22,0.4);background:rgba(249,115,22,0.03);">
+              <span class="ss-icon" style="background:#f97316;">&#129370;</span>
+              <span class="ss-name" style="color:rgba(249,115,22,0.7);flex:1;">HySpawns</span>
+              <span class="ss-count">413 entities</span>
+            </a>
+          </div>
+        </div>
+        <span class="logo-subtitle">Hytale Sound Catalog</span>
+        <span class="header-by">&middot; by <a href="https://www.curseforge.com/hytale/mods/scruby-companion" target="_blank" rel="noopener">Scruby Companion</a></span>
+      </div>
+
+      <div class="header-center">
+        <div class="search-container">
+          <span class="search-icon" aria-hidden="true">&#128269;</span>
+          <input class="search-input" id="search" type="text" placeholder="Search HySounds..." autocomplete="off" spellcheck="false" aria-label="Search sounds">
+          <span class="search-kbd"><kbd>Ctrl</kbd><kbd>K</kbd></span>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <span class="counter-badge" id="counter-badge">885 sounds</span>
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle light/dark mode" title="Switch to light mode">☀️</button>
+        <a class="gh-link" href="https://github.com/superdynamix-dev/hysounds-website" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          GitHub
+        </a>
+      </div>
+    </header>
+
+    <!-- ===== SIDEBAR ===== -->
+    <nav class="sidebar" id="sidebar">
+
+      <!-- COPY FORMAT -->
+      <div class="sidebar-label">Copy Format</div>
+
+      <div class="sidebar-format active" data-format="2d">
+        <span class="sidebar-radio"></span>
+        /sound 2d
+      </div>
+      <div class="sidebar-format" data-format="3d">
+        <span class="sidebar-radio"></span>
+        /sound 3d ~ ~ ~
+      </div>
+      <div class="sidebar-format" data-format="json">
+        <span class="sidebar-radio"></span>
+        JSON config
+      </div>
+
+      <div class="sidebar-divider"></div>
+
+      <!-- BY ACTION (populated by JS) -->
+      <div class="sidebar-label">By Action</div>
+      <div id="sidebar-actions"></div>
+
+      <div class="sidebar-divider"></div>
+
+      <!-- BY SOURCE (populated by JS) -->
+      <div class="sidebar-label">By Source</div>
+      <div id="sidebar-sources"></div>
+
+      <div class="sidebar-divider"></div>
+
+      <!-- BY ZONE (populated by JS) -->
+      <div class="sidebar-label">Zone</div>
+      <div id="sidebar-zones"></div>
+
+    </nav>
+
+    <!-- ===== MAIN ===== -->
+    <main class="main" id="main">
+
+      <!-- View bar -->
+      <div class="view-bar">
+        <div class="view-toggle">
+          <button class="view-btn active" data-view="action">By Action</button>
+          <button class="view-btn" data-view="entity">By Entity</button>
+        </div>
+        <span class="view-info" id="view-info">Grouped by action type</span>
+      </div>
+
+      <!-- Source filter pills (populated by JS) -->
+      <div class="cat-pills" id="cat-pills"></div>
+
+      <!-- Content area (populated by JS) -->
+      <div id="content"></div>
+
+      <noscript>
+      <div class="seo-content" style="padding:2rem;color:var(--t1);font-family:var(--font-sans);line-height:1.7;">
+        <h2 style="margin-bottom:0.5rem;">All Hytale Sound IDs — Complete Reference (753 Sounds)</h2>
+        <p style="margin-bottom:1.5rem;">HySounds is a searchable catalog of all Hytale built-in sound IDs. Use <code>/sound 2d [ID]</code> or <code>/sound 3d [ID]</code> to play sounds in-game. Enable JavaScript for the full interactive experience with search, filter, and copy features.</p>
+        <h3 style="margin:1rem 0 0.3rem;">Creature Sounds (357)</h3>
+        <p style="word-break:break-all;">SFX_Antelope_Alerted, SFX_Antelope_Death, SFX_Antelope_Hurt, SFX_Antelope_Run, SFX_Antelope_Walk, SFX_Bat_Alerted, SFX_Bat_Death, SFX_Bat_Hurt, SFX_Bear_Grizzly_Alerted, SFX_Bear_Grizzly_Attack, SFX_Bear_Grizzly_Death, SFX_Bear_Grizzly_Hurt, SFX_Bear_Grizzly_Run, SFX_Bear_Grizzly_Sleep, SFX_Bear_Walk, SFX_Bison_Alerted, SFX_Bison_Death, SFX_Bison_Hurt, SFX_Bison_Idle, SFX_Bison_Run, SFX_Bison_Walk, SFX_Boar_Alerted, SFX_Boar_Death, SFX_Boar_Hurt, SFX_Boar_Run, SFX_Boar_Sleep, SFX_Boar_Walk, SFX_Bunny_Alerted, SFX_Bunny_Death, SFX_Bunny_Hurt, SFX_Calf_Run, SFX_Calf_Walk, SFX_Camel_Alerted, SFX_Camel_Death, SFX_Camel_Hurt, SFX_Camel_Laydown, SFX_Camel_Run, SFX_Camel_Sleep, SFX_Camel_Wake, SFX_Camel_Walk, SFX_Chick_Alerted, SFX_Chick_Death, SFX_Chick_Hurt, SFX_Chicken_Alerted, SFX_Chicken_Death, SFX_Chicken_Hurt, SFX_Chicken_Run, SFX_Chicken_Walk, SFX_Cow_Alerted, SFX_Cow_Death, SFX_Cow_Hurt, SFX_Cow_Idle, SFX_Cow_Sleep, SFX_Cow_Walk, SFX_Crawler_Void_Alerted, SFX_Crawler_Void_Death, SFX_Crawler_Void_Despawn, SFX_Crawler_Void_Hurt, SFX_Crawler_Void_Run, SFX_Crawler_Void_Sleep, SFX_Crawler_Void_Spawn, SFX_Crawler_Void_Walk, SFX_Crocodile_Alerted, SFX_Crocodile_Death, SFX_Crocodile_Hurt, SFX_Crow_Death, SFX_Crow_Hurt, SFX_Deer_Doe_Alerted, SFX_Deer_Doe_Death, SFX_Deer_Doe_Hurt, SFX_Deer_Doe_Run, SFX_Deer_Doe_Sleep, SFX_Deer_Stag_Alerted, SFX_Deer_Stag_Death, SFX_Deer_Stag_Hurt, SFX_Deer_Stag_Run, SFX_Deer_Stag_Sleep, SFX_Deer_Walk, SFX_Dragon_Sleep, SFX_Duck_Alerted, SFX_Duck_Death, SFX_Duck_Hurt, SFX_Duck_Run, SFX_Emberwulf_Alerted, SFX_Emberwulf_Death, SFX_Emberwulf_Hurt, SFX_Emberwulf_Run, SFX_Emberwulf_Sleep, SFX_Emberwulf_Walk, SFX_Eye_Void_Alerted, SFX_Eye_Void_Attack_Blast, SFX_Eye_Void_Attack_Summon, SFX_Eye_Void_Death, SFX_Eye_Void_Fly_Movement, SFX_Eye_Void_Hurt, SFX_Eye_Void_Idle, SFX_Fen_Stalker_Alerted, SFX_Fen_Stalker_Attack_Swipe, SFX_Fen_Stalker_Death, SFX_Fen_Stalker_Eat, SFX_Fen_Stalker_Eat_Finish, SFX_Fen_Stalker_Greet, SFX_Fen_Stalker_Hurt, SFX_Fen_Stalker_Scared, SFX_Fen_Stalker_Seek, SFX_Fen_Stalker_Sniff, SFX_Feran_Death, SFX_Fish_Death, SFX_Fish_Flee, SFX_Fish_Hurt, SFX_Flamingo_Alerted, SFX_Flamingo_Death, SFX_Flamingo_Fly, SFX_Flamingo_Hurt, SFX_Fox_Alerted, SFX_Fox_Death, SFX_Fox_Hurt, SFX_Fox_Run, SFX_Fox_Sleep, SFX_Frog_Alerted, SFX_Frog_Croak, SFX_Frog_Death, SFX_Frog_Hurt, SFX_Frog_Idle, SFX_Frog_Run, SFX_Gecko_Alerted, SFX_Gecko_Death, SFX_Gecko_Hurt, SFX_Goat_Run, SFX_Goat_Walk, SFX_Goblin_Alerted, SFX_Goblin_Death, SFX_Goblin_Hurt, SFX_Goblin_Run, SFX_Golem_Earth_Alerted, SFX_Golem_Earth_Death, SFX_Golem_Earth_Hurt, SFX_Golem_Earth_Laydown, SFX_Golem_Earth_Slam_Impact, SFX_Golem_Earth_Stomp, SFX_Golem_Earth_Swing, SFX_Golem_Earth_Wake, SFX_Golem_Firesteel_Alerted_01, SFX_Golem_Firesteel_Alerted_02, SFX_Golem_Firesteel_Death, SFX_Golem_Firesteel_Laydown, SFX_Golem_Firesteel_Wake, SFX_Golem_Frost_Alerted, SFX_Golem_Frost_Death, SFX_Golem_Frost_Hurt, SFX_Golem_Frost_Laydown, SFX_Golem_Frost_Wake, SFX_Golem_Sand_Alerted, SFX_Golem_Sand_Death, SFX_Golem_Sand_Hurt, SFX_Golem_Sand_Laydown, SFX_Golem_Sand_Wake, SFX_Hedera_Scream, SFX_Horse_Alerted, SFX_Horse_Death, SFX_Horse_Hurt, SFX_Horse_Idle, SFX_Horse_Run, SFX_Horse_Sleep, SFX_Horse_Wake, SFX_Hyena_Alerted, SFX_Hyena_Death, SFX_Hyena_Hurt, SFX_Hyena_Idle, SFX_Klops_Alerted, SFX_Klops_Death, SFX_Klops_Hurt, SFX_Klops_Idle, SFX_Klops_Run, SFX_Lamb_Alerted, SFX_Lamb_Death, SFX_Lamb_Hurt, SFX_Larva_Alerted, SFX_Larva_Death, SFX_Larva_Despawn, SFX_Larva_Hurt, SFX_Larva_Spawn, SFX_Leopard_Snow_Alerted, SFX_Leopard_Snow_Death, SFX_Leopard_Snow_Hurt, SFX_Leopard_Snow_Run, SFX_Moose_Bull_Alerted, SFX_Mouse_Alerted, SFX_Mouse_Death, SFX_Mouse_Flee, SFX_Mouse_Hurt, SFX_Mouse_Run, SFX_Mouse_Sleep, SFX_NPC_Unarmed_Swing, SFX_Owl_Alerted, SFX_Owl_Death, SFX_Owl_Hurt, SFX_Pig_Alerted, SFX_Pig_Death, SFX_Pig_Hurt, SFX_Pig_Run, SFX_Pig_Walk, SFX_Pigeon_Death, SFX_Pigeon_Hurt, SFX_Piglet_Alerted, SFX_Piglet_Death, SFX_Piglet_Hurt, SFX_Piglet_Run, SFX_Rabbit_Alerted, SFX_Rabbit_Death, SFX_Rabbit_Hurt, SFX_Rabbit_Run, SFX_Rabbit_Sleep, SFX_Ram_Alerted, SFX_Ram_Death, SFX_Ram_Hurt, SFX_Ram_Run, SFX_Ram_Sleep, SFX_Raptor_Cave_Alerted, SFX_Raptor_Cave_Idle, SFX_Rat_Death, SFX_Rat_Hurt, SFX_Raven_Alerted, SFX_Raven_Death, SFX_Raven_Flee, SFX_Raven_Hurt, SFX_Rex_Alerted, SFX_Rex_Bite, SFX_Rex_Death, SFX_Rex_Hurt, SFX_Rex_Walk, SFX_Scarak_Fighter_Alerted, SFX_Scarak_Fighter_Death, SFX_Scarak_Fighter_Hurt, SFX_Scarak_Seeker_Alerted, SFX_Scarak_Seeker_Death, SFX_Scarak_Seeker_Hurt, SFX_Scarak_Seeker_Spitball_Death, SFX_Scarak_Spitball_Fire, SFX_Scorpion_Alerted, SFX_Scorpion_Death, SFX_Scorpion_Run, SFX_Scorpion_Threaten, SFX_Shark_Death, SFX_Shark_Dive, SFX_Shark_Hurt, SFX_Shark_Swim, SFX_Sheep_Alerted, SFX_Sheep_Death, SFX_Sheep_Hurt, SFX_Sheep_Run, SFX_Sheep_Sheared, SFX_Sheep_Walk, SFX_Skeleton_Alerted, SFX_Skeleton_Death_1, SFX_Skeleton_Death_2, SFX_Skeleton_Death_3, SFX_Skeleton_Death_4, SFX_Skeleton_Despawn_1, SFX_Skeleton_Despawn_2, SFX_Skeleton_Hurt, SFX_Skeleton_Mage_Spellbook_Charge, SFX_Skeleton_Mage_Spellbook_Impact, SFX_Skeleton_Praetorian_Alerted, SFX_Skeleton_Praetorian_Death_1, SFX_Skeleton_Praetorian_Death_2, SFX_Skeleton_Praetorian_Hurt, SFX_Skeleton_Praetorian_Run, SFX_Skeleton_Praetorian_Search_2, SFX_Skeleton_Praetorian_Spawn_1, SFX_Skeleton_Praetorian_Walk, SFX_Skeleton_Run, SFX_Skeleton_Search_2, SFX_Skeleton_Spawn_1, SFX_Skeleton_Spawn_2, SFX_Skeleton_Walk, SFX_Snake_Alerted, SFX_Snake_Death, SFX_Snake_Hurt, SFX_Snake_Idle, SFX_Spark_Living_Alerted, SFX_Spark_Living_Death, SFX_Sparrow_Alerted, SFX_Sparrow_Death, SFX_Sparrow_Hurt, SFX_Sparrow_Idle, SFX_Spawn_Void_Alerted, SFX_Spawn_Void_Death, SFX_Spawn_Void_Hurt, SFX_Spawn_Void_Run, SFX_Spider_Alerted, SFX_Spider_Death, SFX_Spider_Run, SFX_Spirit_Root_Alerted, SFX_Spirit_Root_Death_01, SFX_Spirit_Root_Death_02, SFX_Spirit_Root_Hurt, SFX_Spirit_Root_Spawn, SFX_Squirrel_Alerted, SFX_Squirrel_Death, SFX_Squirrel_Hurt, SFX_Squirrel_Run, SFX_Tetrabird_Alerted, SFX_Tetrabird_Death, SFX_Tetrabird_Flee, SFX_Tetrabird_Hurt, SFX_Tetrabird_Run, SFX_Tiger_Sabertooth_Alerted, SFX_Tiger_Sabertooth_Death, SFX_Tiger_Sabertooth_Hurt, SFX_Tiger_Sabertooth_Run, SFX_Toad_Rhino_Alerted, SFX_Toad_Rhino_Death, SFX_Toad_Rhino_Hurt, SFX_Toad_Rhino_Magma_Alerted, SFX_Toad_Rhino_Magma_Death, SFX_Toad_Rhino_Magma_Hurt, SFX_Toad_Rhino_Magma_Run, SFX_Toad_Rhino_Magma_Tongue_Impact, SFX_Toad_Rhino_Magma_Tongue_Whoosh, SFX_Toad_Rhino_Run, SFX_Toad_Rhino_Tongue_Impact, SFX_Toad_Rhino_Tongue_Whoosh, SFX_Trork_Alerted, SFX_Trork_Death, SFX_Trork_Hurt_01, SFX_Trork_Hurt_02, SFX_Trork_Run, SFX_Trork_Sleep, SFX_Trork_Throwing_Axe, SFX_Vulture_Alerted, SFX_Vulture_Death, SFX_Vulture_Flee, SFX_Vulture_Hurt, SFX_Warthog_Alerted, SFX_Warthog_Death, SFX_Warthog_Hurt, SFX_Warthog_Piglet_Alerted, SFX_Warthog_Piglet_Death, SFX_Warthog_Piglet_Hurt, SFX_Warthog_Piglet_Run, SFX_Warthog_Run, SFX_Warthog_Sleep, SFX_Warthog_Walk, SFX_Wolf_Alerted, SFX_Wolf_Death, SFX_Wolf_Hurt, SFX_Wolf_Run, SFX_Wolf_Sleep, SFX_Yeti_Alerted, SFX_Zombie_Alerted, SFX_Zombie_Attack_Swing, SFX_Zombie_Death, SFX_Zombie_Despawn, SFX_Zombie_Hurt, SFX_Zombie_Pursuit, SFX_Zombie_Spawn</p>
+        <h3 style="margin:1rem 0 0.3rem;">Weapon Sounds (116)</h3>
+        <p style="word-break:break-all;">SFX_Arrow_Fire_Hit, SFX_Arrow_Fire_Miss, SFX_Arrow_Frost_Hit, SFX_Arrow_Frost_Miss, SFX_Arrow_FullCharge_Hit, SFX_Arrow_FullCharge_Miss, SFX_Arrow_HalfCharge_Hit, SFX_Arrow_HalfCharge_Miss, SFX_Arrow_NoCharge_Hit, SFX_Arrow_NoCharge_Miss, SFX_Axe_Crude_Impact, SFX_Axe_Crude_Swing, SFX_Axe_Iron_Impact, SFX_Axe_Iron_Swing, SFX_Axe_Special_Impact, SFX_Axe_Special_Swing, SFX_Blunderbuss_Bullet_WhizBy, SFX_Blunderbuss_Fire, SFX_Blunderbuss_Hit, SFX_Blunderbuss_Load, SFX_Blunderbuss_Miss, SFX_Blunderbuss_No_Ammo, SFX_Bow_No_Ammo, SFX_Bow_T1_Block_Impact, SFX_Bow_T1_Draw, SFX_Bow_T1_Raise, SFX_Bow_T1_Shoot, SFX_Bow_T1_Swing, SFX_Bow_T2_Draw, SFX_Bow_T2_Shoot, SFX_Bow_T2_Signature_Loop, SFX_Bow_T2_Signature_Nock, SFX_Bow_T2_Signature_Shoot, SFX_Club_Special_Impact, SFX_Club_Special_Swing, SFX_Club_Steel_Impact, SFX_Club_Steel_Swing, SFX_Club_Wood_Impact, SFX_Club_Wood_Swing, SFX_Daggers_T1_Guard, SFX_Daggers_T1_Pounce, SFX_Daggers_T1_Slash_Impact, SFX_Daggers_T1_Stab_Impact, SFX_Daggers_T1_Swing, SFX_Daggers_T1_Swing_Double, SFX_Daggers_T2_Guard, SFX_Daggers_T2_Slash_Impact, SFX_Daggers_T2_Stab_Impact, SFX_Daggers_T2_Swing, SFX_Daggers_T2_Swing_Double, SFX_Flail_Charge, SFX_Flail_Swing, SFX_Hand_Crossbow_T1_Block_Impact, SFX_Hand_Crossbow_T1_Raise, SFX_Hand_Crossbow_T1_Shove, SFX_Hand_Crossbow_T2_Load, SFX_Hand_Crossbow_T2_Reload_Start, SFX_Handgun_Fire, SFX_Hatchet_T1_Swing_RL_Local, SFX_Hatchet_T2_Impact_Nice, SFX_Hoe_T1_Swing_Down_Local, SFX_Hoe_T1_Till, SFX_Light_Melee_T1_Block, SFX_Light_Melee_T1_Guard_Hit, SFX_Light_Melee_T1_Impact, SFX_Light_Melee_T1_Lunge, SFX_Light_Melee_T1_Shove, SFX_Light_Melee_T1_Swing, SFX_Light_Melee_T2_Block, SFX_Light_Melee_T2_Guard_Break, SFX_Light_Melee_T2_Guard_Hit, SFX_Light_Melee_T2_Lunge, SFX_Light_Melee_T2_Lunge_Charge, SFX_Light_Melee_T2_Swing, SFX_Longsword_Special_Impact, SFX_Longsword_Special_Swing, SFX_Mace_T1_Block_Impact, SFX_Mace_T1_Impact, SFX_Mace_T1_Swing, SFX_Mace_T1_Swing_Charged, SFX_Mace_T2_Impact, SFX_Mace_T2_Signature_Impact, SFX_Mace_T2_Signature_Launch, SFX_Mace_T2_Swing, SFX_Mace_T2_Swing_Charged, SFX_Pickaxe_T1_Swing_Down_Local, SFX_Rifle_Fire, SFX_Shears_Activate, SFX_Shield_T1_Break, SFX_Shield_T1_Impact, SFX_Shield_T1_Raise, SFX_Shield_T1_Swing, SFX_Shield_T2_Impact, SFX_Shield_T2_Raise, SFX_Shield_T2_Swing, SFX_Shovel_T1_Swing_RL_Local, SFX_Shovel_T2_Impact_Nice, SFX_Spear_Impact, SFX_Spear_Lunge, SFX_Spear_Miss, SFX_Spear_Projectile_Impact, SFX_Spear_Throw, SFX_Spear_Throw_Charge, SFX_Sword_T1_Swing, SFX_Sword_T1_Swing_Down, SFX_Sword_T2_Impact, SFX_Sword_T2_Swing, SFX_Sword_T2_Swing_Down, SFX_T1_Impact_Blunt, SFX_Tool_T1_Swing, SFX_Tool_Watering_Can_Water, SFX_Torch_Impact, SFX_Torch_Swing, SFX_Unarmed_Impact, SFX_Unarmed_Swing, SFX_Weapon_Charge_Swing</p>
+        <h3 style="margin:1rem 0 0.3rem;">Magic & Spell Sounds (46)</h3>
+        <p style="word-break:break-all;">SFX_Bomb_Fire_Goblin_Bounce, SFX_Bomb_Fire_Goblin_Hit, SFX_Bomb_Fuse, SFX_Deployable_Totem_Heal_Despawn, SFX_Deployable_Totem_Heal_Effect_Local, SFX_Deployable_Totem_Heal_Spawn, SFX_Deployable_Totem_Slowing_Despawn, SFX_Deployable_Totem_Slowing_Effect_Local, SFX_Deployable_Totem_Slowing_Spawn, SFX_Effect_Burn_Local, SFX_Effect_Burn_World, SFX_Effect_Poison_Local, SFX_Effect_Poison_World, SFX_Egg_Hit, SFX_Egg_Miss, SFX_Fireball_Bounce, SFX_Fireball_Death, SFX_Fireball_Miss, SFX_Goblin_Lobber_Bomb_Bounce, SFX_Goblin_Lobber_Bomb_Death, SFX_Goblin_Lobber_Bomb_Miss, SFX_GunPvP_Assault_Rifle_Bullet_Death, SFX_GunPvP_Handgun_Bullet_Death, SFX_Ice_Ball_Death, SFX_Outlander_Hunter_Arrow_Hit, SFX_Outlander_Hunter_Arrow_Miss, SFX_Portal_Neutral, SFX_Portal_Neutral_Open, SFX_Portal_Neutral_Teleport_Local, SFX_Projectile_Poop_Hit, SFX_Rubble_Bounce, SFX_Rubble_Hit, SFX_Staff_Flame_Consume_Charge_1, SFX_Staff_Flame_Consume_Charge_2, SFX_Staff_Flame_Consume_Charge_3, SFX_Staff_Flame_Consume_Charge_4, SFX_Staff_Flame_Fireball_Impact, SFX_Staff_Flame_Fireball_Launch, SFX_Staff_Flame_Flamethrower, SFX_Staff_Flame_Flamethrower_End, SFX_Staff_Flame_Flamethrower_Impact, SFX_Staff_Flame_Trap_Deploy, SFX_Staff_Flame_Trap_Despawn, SFX_Staff_Flame_Trap_Loop, SFX_Staff_Ice_Shoot, SFX_Tornado</p>
+        <h3 style="margin:1rem 0 0.3rem;">Block & Material Sounds (134)</h3>
+        <p style="word-break:break-all;">SFX_Bone_Break, SFX_Bone_Hit, SFX_Bone_Land, SFX_Bone_Walk, SFX_Bramble_MoveIn, SFX_Branch_Break, SFX_Branch_Hit, SFX_Branch_Land, SFX_Branch_Walk, SFX_Bush_Break, SFX_Bush_Hit, SFX_Bush_MoveIn, SFX_Cactus_Break, SFX_Cactus_Hit, SFX_Cactus_Large_Hit, SFX_Cactus_Small_Break, SFX_Cactus_Small_Hit, SFX_Clay_Pot_Large_Break, SFX_Clay_Pot_Large_Hit, SFX_Clay_Pot_Large_Walk, SFX_Clay_Pot_Small_Break, SFX_Clay_Pot_Small_Hit, SFX_Clay_Pot_Small_Walk, SFX_Cloth_Break, SFX_Cloth_Hit, SFX_Cloth_Land, SFX_Cloth_Walk, SFX_Cocoon_Active, SFX_Cocoon_Break, SFX_Cocoon_Build, SFX_Cocoon_Hit, SFX_Cocoon_Walk, SFX_Coins_Land, SFX_Coins_Walk, SFX_Crystal_Break, SFX_Crystal_Hit, SFX_Crystal_Walk, SFX_Default_Break, SFX_Default_Build, SFX_Default_Clone, SFX_Default_Harvest, SFX_Default_Land, SFX_Default_Walk, SFX_Dirt_Break, SFX_Dirt_Hit, SFX_Dirt_Land, SFX_Dirt_Walk, SFX_Eggsac_Active, SFX_Fern_Break, SFX_Fern_MoveIn, SFX_Flame_Break, SFX_Flame_Build, SFX_Flame_Default_Loop, SFX_Gem_Break, SFX_Gem_Emit_Loop, SFX_Glass_Break, SFX_Grass_Break, SFX_Grass_Hit, SFX_Grass_Land, SFX_Grass_Walk, SFX_Gravel_Break, SFX_Gravel_Hit, SFX_Gravel_Land, SFX_Gravel_Walk, SFX_Ice_Break, SFX_Ice_Hit, SFX_Ice_Land, SFX_Ice_Walk, SFX_LeavesGround_Break, SFX_LeavesGround_Hit, SFX_LeavesGround_Land, SFX_LeavesGround_Walk, SFX_Leaves_Break, SFX_Leaves_Hit, SFX_Leaves_Walk, SFX_Metal_Break, SFX_Metal_Build, SFX_Metal_Hit, SFX_Metal_Land, SFX_Metal_Walk, SFX_Mud_Break, SFX_Mud_Hit, SFX_Mud_Land, SFX_Mud_Walk, SFX_Mushroom_Break, SFX_Mushroom_Harvest, SFX_Ore_Break, SFX_Ore_Hit, SFX_Plant_Break, SFX_Plant_Hit, SFX_Plant_MoveIn, SFX_Plushie_Break, SFX_Plushie_Build, SFX_Poop_Bounce, SFX_Poop_Break, SFX_Poop_Hit, SFX_Poop_Walk, SFX_Reeds_MoveIn, SFX_Rope_Break, SFX_Rope_Land, SFX_Rope_Walk, SFX_Sand_Break, SFX_Sand_Hit, SFX_Sand_Land, SFX_Sand_Walk, SFX_Seeds_Place, SFX_Snow_Break, SFX_Snow_Hit, SFX_Snow_Land, SFX_Snow_Walk, SFX_Soft_Break, SFX_Soft_Hit, SFX_Soft_Land, SFX_Soft_Walk, SFX_Sticks_Break, SFX_Stone_Break, SFX_Stone_Coffin_Open_Close, SFX_Stone_Harvest, SFX_Stone_Hit, SFX_Stone_Land, SFX_Stone_Walk, SFX_Tall_Grass_MoveIn, SFX_Trashpile_Land, SFX_Trashpile_Walk, SFX_Water_MoveIn, SFX_Water_MoveOut, SFX_Web_MoveIn, SFX_Window_Break, SFX_Window_Stone_Break, SFX_Wood_Break, SFX_Wood_Build, SFX_Wood_Hit, SFX_Wood_Land, SFX_Wood_Walk</p>
+        <h3 style="margin:1rem 0 0.3rem;">Player Sounds (21)</h3>
+        <p style="word-break:break-all;">SFX_Player_Climb_Down, SFX_Player_Climb_Side, SFX_Player_Climb_Up, SFX_Player_Death, SFX_Player_Death_Drown, SFX_Player_Fall, SFX_Player_Glide_Motion, SFX_Player_Glide_Stationary, SFX_Player_Hurt, SFX_Player_Hurt_Burn, SFX_Player_Hurt_Drowning, SFX_Player_Hurt_Fall, SFX_Player_Jump, SFX_Player_Mantle, SFX_Player_Roll, SFX_Player_Slide, SFX_Player_Swim, SFX_Player_Swim_Fast, SFX_Player_Swim_Jump, SFX_Player_Unarmed_Swing_Left, SFX_Player_Unarmed_Swing_Right</p>
+        <h3 style="margin:1rem 0 0.3rem;">UI & Environment Sounds (48)</h3>
+        <p style="word-break:break-all;">SFX_Avatar_Powers_Disable, SFX_Avatar_Powers_Disable_Local, SFX_Avatar_Powers_Enable, SFX_Avatar_Powers_Enable_Local, SFX_Brazier_Break, SFX_Brazier_Build, SFX_Campfire_Break, SFX_Campfire_Build, SFX_Campfire_Default_Loop, SFX_Candle_Default_Loop, SFX_Candle_Off, SFX_Cauldron_Bubbling, SFX_Cauldron_Bubbling_Small, SFX_Chest_Wooden_Close, SFX_Chest_Wooden_Open, SFX_Consume_Bread_Local, SFX_Crops_Grow, SFX_Crops_Grow_Stage_Complete, SFX_Divine_Respawn, SFX_Door_Ancient_Close, SFX_Door_Ancient_Open, SFX_Door_Crude_Close, SFX_Door_Crude_Open, SFX_Door_Desert_Close, SFX_Door_Desert_Open, SFX_Door_Jungle_Close, SFX_Door_Jungle_Open, SFX_Door_Lumberjack_Close, SFX_Door_Lumberjack_Open, SFX_Door_Temple_Dark_Close, SFX_Door_Temple_Dark_Open, SFX_Door_Temple_Light_Close, SFX_Door_Temple_Light_Open, SFX_Door_Wooden_Close, SFX_Door_Wooden_Open, SFX_Env_Emit_Geyzer, SFX_Generic_Crafting_Failed, SFX_Health_Potion_High_Drink, SFX_Health_Potion_Low_Drink, SFX_Memories_Unlock_Local, SFX_Ping, SFX_Potion_Drink_Success, SFX_Stamina_Potion_Success, SFX_Torch_Default_Loop, SFX_Torch_Off, SFX_Torch_On_Loop, SFX_Unbreakable_Block, SFX_Wisp_Lamp_Loop</p>
+        <h3 style="margin:1rem 0 0.3rem;">Crafting Station Sounds (31)</h3>
+        <p style="word-break:break-all;">SFX_Alchemy_Bench_Close, SFX_Alchemy_Bench_Craft, SFX_Alchemy_Bench_Open, SFX_Arcane_Workbench_Close_Local, SFX_Arcane_Workbench_Craft, SFX_Arcane_Workbench_Open_Local, SFX_Armour_Bench_Close, SFX_Armour_Bench_Craft, SFX_Armour_Bench_Open, SFX_Bench_Placeholder, SFX_Campfire_Close_Local, SFX_Campfire_Open_Local, SFX_Campfire_Processing, SFX_Campfire_Processing_End, SFX_Campfire_Processing_Failed, SFX_Furnace_Bench_Close, SFX_Furnace_Bench_Open, SFX_Furnace_Bench_Processing, SFX_Furnace_Bench_Processing_Complete, SFX_Furnace_Bench_Processing_End, SFX_Furnace_Bench_Processing_Failed, SFX_Lumbermill_Bench_Close, SFX_Lumbermill_Bench_Open, SFX_Weapon_Bench_Close, SFX_Weapon_Bench_Craft, SFX_Weapon_Bench_Open, SFX_Workbench_Close, SFX_Workbench_Craft, SFX_Workbench_Open, SFX_Workbench_Upgrade_Complete_Default, SFX_Workbench_Upgrade_Start_Default</p>
+        <h2>Frequently Asked Questions</h2>
+        <h3>How do I play sounds in Hytale?</h3>
+        <p>Use the built-in server commands: /sound 2d [SFX_ID] for global sounds, or /sound 3d [SFX_ID] ~ ~ ~ for positional sounds. Add --all to play for all online players. Example: /sound 2d SFX_Wolf_Death</p>
+        <h3>How many sounds does Hytale have?</h3>
+        <p>Hytale has 753 unique built-in sound IDs across 7 categories: Creatures (357), Blocks (134), Weapons (116), UI/Environment (48), Magic (46), Crafting (31), and Player (21).</p>
+        <h3>What is the format of Hytale sound IDs?</h3>
+        <p>All Hytale sound IDs follow the pattern SFX_[Entity]_[Action]. For example: SFX_Wolf_Death, SFX_Skeleton_Spawn_1, SFX_Golem_Earth_Wake.</p>
+        <h3>How do I add sounds to a Hytale mod?</h3>
+        <p>In NPC role JSON configs, use WorldSoundEventId (all nearby players hear), LocalSoundEventId (only triggering player), HitSoundEventId, DeathSoundEventId, and DespawnSoundEventId fields.</p>
+      </div>
+      </noscript>
+
+      <!-- Empty state (hidden by default) -->
+      <div class="empty-state" id="empty-state">
+        <div class="empty-state-icon">&#128263;</div>
+        <div class="empty-state-title">No matches found</div>
+        <div class="empty-state-text">
+          Try searching for creature names (skeleton, wolf), events (death, spawn), or materials (stone, wood).
+        </div>
+        <div class="empty-state-suggestions">
+          <button class="suggestion-pill">skeleton</button>
+          <button class="suggestion-pill">death</button>
+          <button class="suggestion-pill">portal</button>
+          <button class="suggestion-pill">bow</button>
+          <button class="suggestion-pill">golem</button>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer" id="footer">
+        HySounds &mdash; Unofficial community tool, not affiliated with Hypixel Studios<br>
+        Built by <a href="https://www.curseforge.com/hytale/mods/scruby-companion" target="_blank" rel="noopener">Scruby Companion</a> &middot; <a href="https://github.com/superdynamix-dev/hysounds-website" target="_blank" rel="noopener">GitHub</a>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- Toast notification -->
+  <div class="toast" id="toast"></div>
+
+
+<script>
+// ===== DATA LAYER =====
+const SOUNDS=[
+  {id:"SFX_Alchemy_Bench_Close",action:"misc",source:"crafting",entity:"Alchemy Bench Close"},
+  {id:"SFX_Alchemy_Bench_Craft",action:"misc",source:"crafting",entity:"Alchemy Bench Craft"},
+  {id:"SFX_Alchemy_Bench_Open",action:"spawn",source:"crafting",entity:"Alchemy Bench"},
+  {id:"SFX_Antelope_Alerted",action:"alert",source:"creature",entity:"Antelope"},
+  {id:"SFX_Antelope_Death",action:"death",source:"creature",entity:"Antelope"},
+  {id:"SFX_Antelope_Hurt",action:"hurt",source:"creature",entity:"Antelope"},
+  {id:"SFX_Antelope_Run",action:"walk",source:"creature",entity:"Antelope"},
+  {id:"SFX_Antelope_Walk",action:"walk",source:"creature",entity:"Antelope"},
+  {id:"SFX_Arcane_Workbench_Close_Local",action:"misc",source:"crafting",entity:"Arcane Workbench Close Local"},
+  {id:"SFX_Arcane_Workbench_Craft",action:"misc",source:"crafting",entity:"Arcane Workbench Craft"},
+  {id:"SFX_Arcane_Workbench_Open_Local",action:"spawn",source:"crafting",entity:"Arcane Workbench"},
+  {id:"SFX_Armour_Bench_Close",action:"misc",source:"crafting",entity:"Armour Bench Close"},
+  {id:"SFX_Armour_Bench_Craft",action:"misc",source:"crafting",entity:"Armour Bench Craft"},
+  {id:"SFX_Armour_Bench_Open",action:"spawn",source:"crafting",entity:"Armour Bench"},
+  {id:"SFX_Arrow_Fire_Hit",action:"attack",source:"weapon",entity:"Arrow"},
+  {id:"SFX_Arrow_Fire_Miss",action:"attack",source:"weapon",entity:"Arrow"},
+  {id:"SFX_Arrow_Frost_Hit",action:"hurt",source:"weapon",entity:"Arrow Frost"},
+  {id:"SFX_Arrow_Frost_Miss",action:"misc",source:"weapon",entity:"Arrow Frost Miss"},
+  {id:"SFX_Arrow_FullCharge_Hit",action:"hurt",source:"weapon",entity:"Arrow FullCharge"},
+  {id:"SFX_Arrow_FullCharge_Miss",action:"misc",source:"weapon",entity:"Arrow FullCharge Miss"},
+  {id:"SFX_Arrow_HalfCharge_Hit",action:"hurt",source:"weapon",entity:"Arrow HalfCharge"},
+  {id:"SFX_Arrow_HalfCharge_Miss",action:"misc",source:"weapon",entity:"Arrow HalfCharge Miss"},
+  {id:"SFX_Arrow_NoCharge_Hit",action:"hurt",source:"weapon",entity:"Arrow NoCharge"},
+  {id:"SFX_Arrow_NoCharge_Miss",action:"misc",source:"weapon",entity:"Arrow NoCharge Miss"},
+  {id:"SFX_Avatar_Powers_Disable",action:"misc",source:"ui",entity:"Avatar Powers Disable"},
+  {id:"SFX_Avatar_Powers_Disable_Local",action:"misc",source:"ui",entity:"Avatar Powers Disable Local"},
+  {id:"SFX_Avatar_Powers_Enable",action:"misc",source:"ui",entity:"Avatar Powers Enable"},
+  {id:"SFX_Avatar_Powers_Enable_Local",action:"misc",source:"ui",entity:"Avatar Powers Enable Local"},
+  {id:"SFX_Axe_Crude_Impact",action:"hurt",source:"weapon",entity:"Axe Crude"},
+  {id:"SFX_Axe_Crude_Swing",action:"attack",source:"weapon",entity:"Axe Crude"},
+  {id:"SFX_Axe_Iron_Impact",action:"hurt",source:"weapon",entity:"Axe Iron"},
+  {id:"SFX_Axe_Iron_Swing",action:"attack",source:"weapon",entity:"Axe Iron"},
+  {id:"SFX_Axe_Special_Impact",action:"hurt",source:"weapon",entity:"Axe Special"},
+  {id:"SFX_Axe_Special_Swing",action:"attack",source:"weapon",entity:"Axe Special"},
+  {id:"SFX_Bat_Alerted",action:"alert",source:"creature",entity:"Bat"},
+  {id:"SFX_Bat_Death",action:"death",source:"creature",entity:"Bat"},
+  {id:"SFX_Bat_Hurt",action:"hurt",source:"creature",entity:"Bat"},
+  {id:"SFX_Bear_Grizzly_Alerted",action:"alert",source:"creature",entity:"Bear Grizzly"},
+  {id:"SFX_Bear_Grizzly_Attack",action:"attack",source:"creature",entity:"Bear Grizzly"},
+  {id:"SFX_Bear_Grizzly_Death",action:"death",source:"creature",entity:"Bear Grizzly"},
+  {id:"SFX_Bear_Grizzly_Hurt",action:"hurt",source:"creature",entity:"Bear Grizzly"},
+  {id:"SFX_Bear_Grizzly_Run",action:"walk",source:"creature",entity:"Bear Grizzly"},
+  {id:"SFX_Bear_Grizzly_Sleep",action:"alert",source:"creature",entity:"Bear Grizzly"},
+  {id:"SFX_Bear_Walk",action:"walk",source:"creature",entity:"Bear"},
+  {id:"SFX_Bench_Placeholder",action:"misc",source:"crafting",entity:"Bench Placeholder"},
+  {id:"SFX_Bison_Alerted",action:"alert",source:"creature",entity:"Bison"},
+  {id:"SFX_Bison_Death",action:"death",source:"creature",entity:"Bison"},
+  {id:"SFX_Bison_Hurt",action:"hurt",source:"creature",entity:"Bison"},
+  {id:"SFX_Bison_Idle",action:"alert",source:"creature",entity:"Bison"},
+  {id:"SFX_Bison_Run",action:"walk",source:"creature",entity:"Bison"},
+  {id:"SFX_Bison_Walk",action:"walk",source:"creature",entity:"Bison"},
+  {id:"SFX_Blunderbuss_Bullet_WhizBy",action:"misc",source:"weapon",entity:"Blunderbuss Bullet WhizBy"},
+  {id:"SFX_Blunderbuss_Fire",action:"attack",source:"weapon",entity:"Blunderbuss"},
+  {id:"SFX_Blunderbuss_Hit",action:"hurt",source:"weapon",entity:"Blunderbuss"},
+  {id:"SFX_Blunderbuss_Load",action:"attack",source:"weapon",entity:"Blunderbuss"},
+  {id:"SFX_Blunderbuss_Miss",action:"misc",source:"weapon",entity:"Blunderbuss Miss"},
+  {id:"SFX_Blunderbuss_No_Ammo",action:"misc",source:"weapon",entity:"Blunderbuss No Ammo"},
+  {id:"SFX_Boar_Alerted",action:"alert",source:"creature",entity:"Boar"},
+  {id:"SFX_Boar_Death",action:"death",source:"creature",entity:"Boar"},
+  {id:"SFX_Boar_Hurt",action:"hurt",source:"creature",entity:"Boar"},
+  {id:"SFX_Boar_Run",action:"walk",source:"creature",entity:"Boar"},
+  {id:"SFX_Boar_Sleep",action:"alert",source:"creature",entity:"Boar"},
+  {id:"SFX_Boar_Walk",action:"walk",source:"creature",entity:"Boar"},
+  {id:"SFX_Bomb_Fire_Goblin_Bounce",action:"attack",source:"magic",entity:"Bomb"},
+  {id:"SFX_Bomb_Fire_Goblin_Hit",action:"attack",source:"magic",entity:"Bomb"},
+  {id:"SFX_Bomb_Fuse",action:"misc",source:"magic",entity:"Bomb Fuse"},
+  {id:"SFX_Bone_Break",action:"hurt",source:"block",entity:"Bone"},
+  {id:"SFX_Bone_Hit",action:"hurt",source:"block",entity:"Bone"},
+  {id:"SFX_Bone_Land",action:"walk",source:"block",entity:"Bone"},
+  {id:"SFX_Bone_Walk",action:"walk",source:"block",entity:"Bone"},
+  {id:"SFX_Bow_No_Ammo",action:"misc",source:"weapon",entity:"Bow No Ammo"},
+  {id:"SFX_Bow_T1_Block_Impact",action:"hurt",source:"weapon",entity:"Bow T1"},
+  {id:"SFX_Bow_T1_Draw",action:"attack",source:"weapon",entity:"Bow T1"},
+  {id:"SFX_Bow_T1_Raise",action:"misc",source:"weapon",entity:"Bow T1 Raise"},
+  {id:"SFX_Bow_T1_Shoot",action:"attack",source:"weapon",entity:"Bow T1"},
+  {id:"SFX_Bow_T1_Swing",action:"attack",source:"weapon",entity:"Bow T1"},
+  {id:"SFX_Bow_T2_Draw",action:"attack",source:"weapon",entity:"Bow T2"},
+  {id:"SFX_Bow_T2_Shoot",action:"attack",source:"weapon",entity:"Bow T2"},
+  {id:"SFX_Bow_T2_Signature_Loop",action:"loop",source:"weapon",entity:"Bow T2 Signature"},
+  {id:"SFX_Bow_T2_Signature_Nock",action:"attack",source:"weapon",entity:"Bow T2 Signature"},
+  {id:"SFX_Bow_T2_Signature_Shoot",action:"attack",source:"weapon",entity:"Bow T2 Signature"},
+  {id:"SFX_Bramble_MoveIn",action:"walk",source:"block",entity:"Bramble"},
+  {id:"SFX_Branch_Break",action:"hurt",source:"block",entity:"Branch"},
+  {id:"SFX_Branch_Hit",action:"hurt",source:"block",entity:"Branch"},
+  {id:"SFX_Branch_Land",action:"walk",source:"block",entity:"Branch"},
+  {id:"SFX_Branch_Walk",action:"walk",source:"block",entity:"Branch"},
+  {id:"SFX_Brazier_Break",action:"hurt",source:"ui",entity:"Brazier"},
+  {id:"SFX_Brazier_Build",action:"spawn",source:"ui",entity:"Brazier"},
+  {id:"SFX_Bunny_Alerted",action:"alert",source:"creature",entity:"Bunny"},
+  {id:"SFX_Bunny_Death",action:"death",source:"creature",entity:"Bunny"},
+  {id:"SFX_Bunny_Hurt",action:"hurt",source:"creature",entity:"Bunny"},
+  {id:"SFX_Bush_Break",action:"hurt",source:"block",entity:"Bush"},
+  {id:"SFX_Bush_Hit",action:"hurt",source:"block",entity:"Bush"},
+  {id:"SFX_Bush_MoveIn",action:"walk",source:"block",entity:"Bush"},
+  {id:"SFX_Cactus_Break",action:"hurt",source:"block",entity:"Cactus"},
+  {id:"SFX_Cactus_Hit",action:"hurt",source:"block",entity:"Cactus"},
+  {id:"SFX_Cactus_Large_Hit",action:"hurt",source:"block",entity:"Cactus Large"},
+  {id:"SFX_Cactus_Small_Break",action:"hurt",source:"block",entity:"Cactus Small"},
+  {id:"SFX_Cactus_Small_Hit",action:"hurt",source:"block",entity:"Cactus Small"},
+  {id:"SFX_Calf_Run",action:"walk",source:"creature",entity:"Calf"},
+  {id:"SFX_Calf_Walk",action:"walk",source:"creature",entity:"Calf"},
+  {id:"SFX_Camel_Alerted",action:"alert",source:"creature",entity:"Camel"},
+  {id:"SFX_Camel_Death",action:"death",source:"creature",entity:"Camel"},
+  {id:"SFX_Camel_Hurt",action:"hurt",source:"creature",entity:"Camel"},
+  {id:"SFX_Camel_Laydown",action:"alert",source:"creature",entity:"Camel"},
+  {id:"SFX_Camel_Run",action:"walk",source:"creature",entity:"Camel"},
+  {id:"SFX_Camel_Sleep",action:"alert",source:"creature",entity:"Camel"},
+  {id:"SFX_Camel_Wake",action:"spawn",source:"creature",entity:"Camel"},
+  {id:"SFX_Camel_Walk",action:"walk",source:"creature",entity:"Camel"},
+  {id:"SFX_Campfire_Break",action:"hurt",source:"ui",entity:"Campfire"},
+  {id:"SFX_Campfire_Build",action:"spawn",source:"ui",entity:"Campfire"},
+  {id:"SFX_Campfire_Close_Local",action:"misc",source:"crafting",entity:"Campfire Close Local"},
+  {id:"SFX_Campfire_Default_Loop",action:"loop",source:"ui",entity:"Campfire Default"},
+  {id:"SFX_Campfire_Open_Local",action:"spawn",source:"crafting",entity:"Campfire"},
+  {id:"SFX_Campfire_Processing",action:"loop",source:"crafting",entity:"Campfire"},
+  {id:"SFX_Campfire_Processing_End",action:"loop",source:"crafting",entity:"Campfire"},
+  {id:"SFX_Campfire_Processing_Failed",action:"loop",source:"crafting",entity:"Campfire"},
+  {id:"SFX_Candle_Default_Loop",action:"loop",source:"ui",entity:"Candle Default"},
+  {id:"SFX_Candle_Off",action:"misc",source:"ui",entity:"Candle Off"},
+  {id:"SFX_Cauldron_Bubbling",action:"loop",source:"ui",entity:"Cauldron"},
+  {id:"SFX_Cauldron_Bubbling_Small",action:"loop",source:"ui",entity:"Cauldron"},
+  {id:"SFX_Chest_Wooden_Close",action:"misc",source:"ui",entity:"Chest Wooden Close"},
+  {id:"SFX_Chest_Wooden_Open",action:"spawn",source:"ui",entity:"Chest Wooden"},
+  {id:"SFX_Chick_Alerted",action:"alert",source:"creature",entity:"Chick"},
+  {id:"SFX_Chick_Death",action:"death",source:"creature",entity:"Chick"},
+  {id:"SFX_Chick_Hurt",action:"hurt",source:"creature",entity:"Chick"},
+  {id:"SFX_Chicken_Alerted",action:"alert",source:"creature",entity:"Chicken"},
+  {id:"SFX_Chicken_Death",action:"death",source:"creature",entity:"Chicken"},
+  {id:"SFX_Chicken_Hurt",action:"hurt",source:"creature",entity:"Chicken"},
+  {id:"SFX_Chicken_Run",action:"walk",source:"creature",entity:"Chicken"},
+  {id:"SFX_Chicken_Walk",action:"walk",source:"creature",entity:"Chicken"},
+  {id:"SFX_Clay_Pot_Large_Break",action:"hurt",source:"block",entity:"Clay Pot Large"},
+  {id:"SFX_Clay_Pot_Large_Hit",action:"hurt",source:"block",entity:"Clay Pot Large"},
+  {id:"SFX_Clay_Pot_Large_Walk",action:"walk",source:"block",entity:"Clay Pot Large"},
+  {id:"SFX_Clay_Pot_Small_Break",action:"hurt",source:"block",entity:"Clay Pot Small"},
+  {id:"SFX_Clay_Pot_Small_Hit",action:"hurt",source:"block",entity:"Clay Pot Small"},
+  {id:"SFX_Clay_Pot_Small_Walk",action:"walk",source:"block",entity:"Clay Pot Small"},
+  {id:"SFX_Cloth_Break",action:"hurt",source:"block",entity:"Cloth"},
+  {id:"SFX_Cloth_Hit",action:"hurt",source:"block",entity:"Cloth"},
+  {id:"SFX_Cloth_Land",action:"walk",source:"block",entity:"Cloth"},
+  {id:"SFX_Cloth_Walk",action:"walk",source:"block",entity:"Cloth"},
+  {id:"SFX_Club_Special_Impact",action:"hurt",source:"weapon",entity:"Club Special"},
+  {id:"SFX_Club_Special_Swing",action:"attack",source:"weapon",entity:"Club Special"},
+  {id:"SFX_Club_Steel_Impact",action:"hurt",source:"weapon",entity:"Club Steel"},
+  {id:"SFX_Club_Steel_Swing",action:"attack",source:"weapon",entity:"Club Steel"},
+  {id:"SFX_Club_Wood_Impact",action:"hurt",source:"weapon",entity:"Club Wood"},
+  {id:"SFX_Club_Wood_Swing",action:"attack",source:"weapon",entity:"Club Wood"},
+  {id:"SFX_Cocoon_Active",action:"loop",source:"block",entity:"Cocoon"},
+  {id:"SFX_Cocoon_Break",action:"hurt",source:"block",entity:"Cocoon"},
+  {id:"SFX_Cocoon_Build",action:"spawn",source:"block",entity:"Cocoon"},
+  {id:"SFX_Cocoon_Hit",action:"hurt",source:"block",entity:"Cocoon"},
+  {id:"SFX_Cocoon_Walk",action:"walk",source:"block",entity:"Cocoon"},
+  {id:"SFX_Coins_Land",action:"walk",source:"block",entity:"Coins"},
+  {id:"SFX_Coins_Walk",action:"walk",source:"block",entity:"Coins"},
+  {id:"SFX_Consume_Bread_Local",action:"misc",source:"ui",entity:"Consume Bread Local"},
+  {id:"SFX_Cow_Alerted",action:"alert",source:"creature",entity:"Cow"},
+  {id:"SFX_Cow_Death",action:"death",source:"creature",entity:"Cow"},
+  {id:"SFX_Cow_Hurt",action:"hurt",source:"creature",entity:"Cow"},
+  {id:"SFX_Cow_Idle",action:"alert",source:"creature",entity:"Cow"},
+  {id:"SFX_Cow_Sleep",action:"alert",source:"creature",entity:"Cow"},
+  {id:"SFX_Cow_Walk",action:"walk",source:"creature",entity:"Cow"},
+  {id:"SFX_Crawler_Void_Alerted",action:"alert",source:"creature",entity:"Crawler Void"},
+  {id:"SFX_Crawler_Void_Death",action:"death",source:"creature",entity:"Crawler Void"},
+  {id:"SFX_Crawler_Void_Despawn",action:"death",source:"creature",entity:"Crawler Void"},
+  {id:"SFX_Crawler_Void_Hurt",action:"hurt",source:"creature",entity:"Crawler Void"},
+  {id:"SFX_Crawler_Void_Run",action:"walk",source:"creature",entity:"Crawler Void"},
+  {id:"SFX_Crawler_Void_Sleep",action:"alert",source:"creature",entity:"Crawler Void"},
+  {id:"SFX_Crawler_Void_Spawn",action:"spawn",source:"creature",entity:"Crawler Void"},
+  {id:"SFX_Crawler_Void_Walk",action:"walk",source:"creature",entity:"Crawler Void"},
+  {id:"SFX_Crocodile_Alerted",action:"alert",source:"creature",entity:"Crocodile"},
+  {id:"SFX_Crocodile_Death",action:"death",source:"creature",entity:"Crocodile"},
+  {id:"SFX_Crocodile_Hurt",action:"hurt",source:"creature",entity:"Crocodile"},
+  {id:"SFX_Crops_Grow",action:"spawn",source:"ui",entity:"Crops"},
+  {id:"SFX_Crops_Grow_Stage_Complete",action:"spawn",source:"ui",entity:"Crops"},
+  {id:"SFX_Crow_Death",action:"death",source:"creature",entity:"Crow"},
+  {id:"SFX_Crow_Hurt",action:"hurt",source:"creature",entity:"Crow"},
+  {id:"SFX_Crystal_Break",action:"hurt",source:"block",entity:"Crystal"},
+  {id:"SFX_Crystal_Hit",action:"hurt",source:"block",entity:"Crystal"},
+  {id:"SFX_Crystal_Walk",action:"walk",source:"block",entity:"Crystal"},
+  {id:"SFX_Daggers_T1_Guard",action:"hurt",source:"weapon",entity:"Daggers T1"},
+  {id:"SFX_Daggers_T1_Pounce",action:"attack",source:"weapon",entity:"Daggers T1"},
+  {id:"SFX_Daggers_T1_Slash_Impact",action:"attack",source:"weapon",entity:"Daggers T1"},
+  {id:"SFX_Daggers_T1_Stab_Impact",action:"attack",source:"weapon",entity:"Daggers T1"},
+  {id:"SFX_Daggers_T1_Swing",action:"attack",source:"weapon",entity:"Daggers T1"},
+  {id:"SFX_Daggers_T1_Swing_Double",action:"attack",source:"weapon",entity:"Daggers T1"},
+  {id:"SFX_Daggers_T2_Guard",action:"hurt",source:"weapon",entity:"Daggers T2"},
+  {id:"SFX_Daggers_T2_Slash_Impact",action:"attack",source:"weapon",entity:"Daggers T2"},
+  {id:"SFX_Daggers_T2_Stab_Impact",action:"attack",source:"weapon",entity:"Daggers T2"},
+  {id:"SFX_Daggers_T2_Swing",action:"attack",source:"weapon",entity:"Daggers T2"},
+  {id:"SFX_Daggers_T2_Swing_Double",action:"attack",source:"weapon",entity:"Daggers T2"},
+  {id:"SFX_Deer_Doe_Alerted",action:"alert",source:"creature",entity:"Deer Doe"},
+  {id:"SFX_Deer_Doe_Death",action:"death",source:"creature",entity:"Deer Doe"},
+  {id:"SFX_Deer_Doe_Hurt",action:"hurt",source:"creature",entity:"Deer Doe"},
+  {id:"SFX_Deer_Doe_Run",action:"walk",source:"creature",entity:"Deer Doe"},
+  {id:"SFX_Deer_Doe_Sleep",action:"alert",source:"creature",entity:"Deer Doe"},
+  {id:"SFX_Deer_Stag_Alerted",action:"alert",source:"creature",entity:"Deer Stag"},
+  {id:"SFX_Deer_Stag_Death",action:"death",source:"creature",entity:"Deer Stag"},
+  {id:"SFX_Deer_Stag_Hurt",action:"hurt",source:"creature",entity:"Deer Stag"},
+  {id:"SFX_Deer_Stag_Run",action:"walk",source:"creature",entity:"Deer Stag"},
+  {id:"SFX_Deer_Stag_Sleep",action:"alert",source:"creature",entity:"Deer Stag"},
+  {id:"SFX_Deer_Walk",action:"walk",source:"creature",entity:"Deer"},
+  {id:"SFX_Default_Break",action:"hurt",source:"block",entity:"Default"},
+  {id:"SFX_Default_Build",action:"spawn",source:"block",entity:"Default"},
+  {id:"SFX_Default_Clone",action:"spawn",source:"block",entity:"Default"},
+  {id:"SFX_Default_Harvest",action:"attack",source:"block",entity:"Default"},
+  {id:"SFX_Default_Land",action:"walk",source:"block",entity:"Default"},
+  {id:"SFX_Default_Walk",action:"walk",source:"block",entity:"Default"},
+  {id:"SFX_Deployable_Totem_Heal_Despawn",action:"death",source:"magic",entity:"Deployable Totem Heal"},
+  {id:"SFX_Deployable_Totem_Heal_Effect_Local",action:"misc",source:"magic",entity:"Deployable Totem Heal Effect Local"},
+  {id:"SFX_Deployable_Totem_Heal_Spawn",action:"spawn",source:"magic",entity:"Deployable Totem Heal"},
+  {id:"SFX_Deployable_Totem_Slowing_Despawn",action:"death",source:"magic",entity:"Deployable Totem Slowing"},
+  {id:"SFX_Deployable_Totem_Slowing_Effect_Local",action:"misc",source:"magic",entity:"Deployable Totem Slowing Effect Local"},
+  {id:"SFX_Deployable_Totem_Slowing_Spawn",action:"spawn",source:"magic",entity:"Deployable Totem Slowing"},
+  {id:"SFX_Dirt_Break",action:"hurt",source:"block",entity:"Dirt"},
+  {id:"SFX_Dirt_Hit",action:"hurt",source:"block",entity:"Dirt"},
+  {id:"SFX_Dirt_Land",action:"walk",source:"block",entity:"Dirt"},
+  {id:"SFX_Dirt_Walk",action:"walk",source:"block",entity:"Dirt"},
+  {id:"SFX_Divine_Respawn",action:"misc",source:"ui",entity:"Divine Respawn"},
+  {id:"SFX_Door_Ancient_Close",action:"misc",source:"ui",entity:"Door Ancient Close"},
+  {id:"SFX_Door_Ancient_Open",action:"spawn",source:"ui",entity:"Door Ancient"},
+  {id:"SFX_Door_Crude_Close",action:"misc",source:"ui",entity:"Door Crude Close"},
+  {id:"SFX_Door_Crude_Open",action:"spawn",source:"ui",entity:"Door Crude"},
+  {id:"SFX_Door_Desert_Close",action:"misc",source:"ui",entity:"Door Desert Close"},
+  {id:"SFX_Door_Desert_Open",action:"spawn",source:"ui",entity:"Door Desert"},
+  {id:"SFX_Door_Jungle_Close",action:"misc",source:"ui",entity:"Door Jungle Close"},
+  {id:"SFX_Door_Jungle_Open",action:"spawn",source:"ui",entity:"Door Jungle"},
+  {id:"SFX_Door_Lumberjack_Close",action:"misc",source:"ui",entity:"Door Lumberjack Close"},
+  {id:"SFX_Door_Lumberjack_Open",action:"spawn",source:"ui",entity:"Door Lumberjack"},
+  {id:"SFX_Door_Temple_Dark_Close",action:"misc",source:"ui",entity:"Door Temple Dark Close"},
+  {id:"SFX_Door_Temple_Dark_Open",action:"spawn",source:"ui",entity:"Door Temple Dark"},
+  {id:"SFX_Door_Temple_Light_Close",action:"misc",source:"ui",entity:"Door Temple Light Close"},
+  {id:"SFX_Door_Temple_Light_Open",action:"spawn",source:"ui",entity:"Door Temple Light"},
+  {id:"SFX_Door_Wooden_Close",action:"misc",source:"ui",entity:"Door Wooden Close"},
+  {id:"SFX_Door_Wooden_Open",action:"spawn",source:"ui",entity:"Door Wooden"},
+  {id:"SFX_Dragon_Sleep",action:"alert",source:"creature",entity:"Dragon"},
+  {id:"SFX_Duck_Alerted",action:"alert",source:"creature",entity:"Duck"},
+  {id:"SFX_Duck_Death",action:"death",source:"creature",entity:"Duck"},
+  {id:"SFX_Duck_Hurt",action:"hurt",source:"creature",entity:"Duck"},
+  {id:"SFX_Duck_Run",action:"walk",source:"creature",entity:"Duck"},
+  {id:"SFX_Effect_Burn_Local",action:"misc",source:"magic",entity:"Effect Burn Local"},
+  {id:"SFX_Effect_Burn_World",action:"misc",source:"magic",entity:"Effect Burn World"},
+  {id:"SFX_Effect_Poison_Local",action:"misc",source:"magic",entity:"Effect Poison Local"},
+  {id:"SFX_Effect_Poison_World",action:"misc",source:"magic",entity:"Effect Poison World"},
+  {id:"SFX_Egg_Hit",action:"hurt",source:"magic",entity:"Egg"},
+  {id:"SFX_Egg_Miss",action:"misc",source:"magic",entity:"Egg Miss"},
+  {id:"SFX_Eggsac_Active",action:"loop",source:"block",entity:"Eggsac"},
+  {id:"SFX_Emberwulf_Alerted",action:"alert",source:"creature",entity:"Emberwulf"},
+  {id:"SFX_Emberwulf_Death",action:"death",source:"creature",entity:"Emberwulf"},
+  {id:"SFX_Emberwulf_Hurt",action:"hurt",source:"creature",entity:"Emberwulf"},
+  {id:"SFX_Emberwulf_Run",action:"walk",source:"creature",entity:"Emberwulf"},
+  {id:"SFX_Emberwulf_Sleep",action:"alert",source:"creature",entity:"Emberwulf"},
+  {id:"SFX_Emberwulf_Walk",action:"walk",source:"creature",entity:"Emberwulf"},
+  {id:"SFX_Env_Emit_Geyzer",action:"loop",source:"ui",entity:"Env"},
+  {id:"SFX_Eye_Void_Alerted",action:"alert",source:"creature",entity:"Eye Void"},
+  {id:"SFX_Eye_Void_Attack_Blast",action:"attack",source:"creature",entity:"Eye Void"},
+  {id:"SFX_Eye_Void_Attack_Summon",action:"attack",source:"creature",entity:"Eye Void"},
+  {id:"SFX_Eye_Void_Death",action:"death",source:"creature",entity:"Eye Void"},
+  {id:"SFX_Eye_Void_Fly_Movement",action:"walk",source:"creature",entity:"Eye Void"},
+  {id:"SFX_Eye_Void_Hurt",action:"hurt",source:"creature",entity:"Eye Void"},
+  {id:"SFX_Eye_Void_Idle",action:"alert",source:"creature",entity:"Eye Void"},
+  {id:"SFX_Fen_Stalker_Alerted",action:"alert",source:"creature",entity:"Fen Stalker"},
+  {id:"SFX_Fen_Stalker_Attack_Swipe",action:"attack",source:"creature",entity:"Fen Stalker"},
+  {id:"SFX_Fen_Stalker_Death",action:"death",source:"creature",entity:"Fen Stalker"},
+  {id:"SFX_Fen_Stalker_Eat",action:"misc",source:"creature",entity:"Fen Stalker Eat"},
+  {id:"SFX_Fen_Stalker_Eat_Finish",action:"misc",source:"creature",entity:"Fen Stalker Eat Finish"},
+  {id:"SFX_Fen_Stalker_Greet",action:"alert",source:"creature",entity:"Fen Stalker"},
+  {id:"SFX_Fen_Stalker_Hurt",action:"hurt",source:"creature",entity:"Fen Stalker"},
+  {id:"SFX_Fen_Stalker_Scared",action:"alert",source:"creature",entity:"Fen Stalker"},
+  {id:"SFX_Fen_Stalker_Seek",action:"alert",source:"creature",entity:"Fen Stalker"},
+  {id:"SFX_Fen_Stalker_Sniff",action:"alert",source:"creature",entity:"Fen Stalker"},
+  {id:"SFX_Feran_Death",action:"death",source:"creature",entity:"Feran"},
+  {id:"SFX_Fern_Break",action:"hurt",source:"block",entity:"Fern"},
+  {id:"SFX_Fern_MoveIn",action:"walk",source:"block",entity:"Fern"},
+  {id:"SFX_Fireball_Bounce",action:"misc",source:"magic",entity:"Fireball Bounce"},
+  {id:"SFX_Fireball_Death",action:"death",source:"magic",entity:"Fireball"},
+  {id:"SFX_Fireball_Miss",action:"misc",source:"magic",entity:"Fireball Miss"},
+  {id:"SFX_Fish_Death",action:"death",source:"creature",entity:"Fish"},
+  {id:"SFX_Fish_Flee",action:"misc",source:"creature",entity:"Fish Flee"},
+  {id:"SFX_Fish_Hurt",action:"hurt",source:"creature",entity:"Fish"},
+  {id:"SFX_Flail_Charge",action:"attack",source:"weapon",entity:"Flail"},
+  {id:"SFX_Flail_Swing",action:"attack",source:"weapon",entity:"Flail"},
+  {id:"SFX_Flame_Break",action:"hurt",source:"block",entity:"Flame"},
+  {id:"SFX_Flame_Build",action:"spawn",source:"block",entity:"Flame"},
+  {id:"SFX_Flame_Default_Loop",action:"loop",source:"block",entity:"Flame Default"},
+  {id:"SFX_Flamingo_Alerted",action:"alert",source:"creature",entity:"Flamingo"},
+  {id:"SFX_Flamingo_Death",action:"death",source:"creature",entity:"Flamingo"},
+  {id:"SFX_Flamingo_Fly",action:"walk",source:"creature",entity:"Flamingo"},
+  {id:"SFX_Flamingo_Hurt",action:"hurt",source:"creature",entity:"Flamingo"},
+  {id:"SFX_Fox_Alerted",action:"alert",source:"creature",entity:"Fox"},
+  {id:"SFX_Fox_Death",action:"death",source:"creature",entity:"Fox"},
+  {id:"SFX_Fox_Hurt",action:"hurt",source:"creature",entity:"Fox"},
+  {id:"SFX_Fox_Run",action:"walk",source:"creature",entity:"Fox"},
+  {id:"SFX_Fox_Sleep",action:"alert",source:"creature",entity:"Fox"},
+  {id:"SFX_Frog_Alerted",action:"alert",source:"creature",entity:"Frog"},
+  {id:"SFX_Frog_Croak",action:"alert",source:"creature",entity:"Frog"},
+  {id:"SFX_Frog_Death",action:"death",source:"creature",entity:"Frog"},
+  {id:"SFX_Frog_Hurt",action:"hurt",source:"creature",entity:"Frog"},
+  {id:"SFX_Frog_Idle",action:"alert",source:"creature",entity:"Frog"},
+  {id:"SFX_Frog_Run",action:"walk",source:"creature",entity:"Frog"},
+  {id:"SFX_Furnace_Bench_Close",action:"misc",source:"crafting",entity:"Furnace Bench Close"},
+  {id:"SFX_Furnace_Bench_Open",action:"spawn",source:"crafting",entity:"Furnace Bench"},
+  {id:"SFX_Furnace_Bench_Processing",action:"loop",source:"crafting",entity:"Furnace Bench"},
+  {id:"SFX_Furnace_Bench_Processing_Complete",action:"loop",source:"crafting",entity:"Furnace Bench"},
+  {id:"SFX_Furnace_Bench_Processing_End",action:"loop",source:"crafting",entity:"Furnace Bench"},
+  {id:"SFX_Furnace_Bench_Processing_Failed",action:"loop",source:"crafting",entity:"Furnace Bench"},
+  {id:"SFX_Gecko_Alerted",action:"alert",source:"creature",entity:"Gecko"},
+  {id:"SFX_Gecko_Death",action:"death",source:"creature",entity:"Gecko"},
+  {id:"SFX_Gecko_Hurt",action:"hurt",source:"creature",entity:"Gecko"},
+  {id:"SFX_Gem_Break",action:"hurt",source:"block",entity:"Gem"},
+  {id:"SFX_Gem_Emit_Loop",action:"loop",source:"block",entity:"Gem"},
+  {id:"SFX_Generic_Crafting_Failed",action:"misc",source:"ui",entity:"Generic Crafting Failed"},
+  {id:"SFX_Glass_Break",action:"hurt",source:"block",entity:"Glass"},
+  {id:"SFX_Goat_Run",action:"walk",source:"creature",entity:"Goat"},
+  {id:"SFX_Goat_Walk",action:"walk",source:"creature",entity:"Goat"},
+  {id:"SFX_Goblin_Alerted",action:"alert",source:"creature",entity:"Goblin"},
+  {id:"SFX_Goblin_Death",action:"death",source:"creature",entity:"Goblin"},
+  {id:"SFX_Goblin_Hurt",action:"hurt",source:"creature",entity:"Goblin"},
+  {id:"SFX_Goblin_Lobber_Bomb_Bounce",action:"misc",source:"magic",entity:"Goblin Lobber Bomb Bounce"},
+  {id:"SFX_Goblin_Lobber_Bomb_Death",action:"death",source:"magic",entity:"Goblin Lobber Bomb"},
+  {id:"SFX_Goblin_Lobber_Bomb_Miss",action:"misc",source:"magic",entity:"Goblin Lobber Bomb Miss"},
+  {id:"SFX_Goblin_Run",action:"walk",source:"creature",entity:"Goblin"},
+  {id:"SFX_Golem_Earth_Alerted",action:"alert",source:"creature",entity:"Golem Earth"},
+  {id:"SFX_Golem_Earth_Death",action:"death",source:"creature",entity:"Golem Earth"},
+  {id:"SFX_Golem_Earth_Hurt",action:"hurt",source:"creature",entity:"Golem Earth"},
+  {id:"SFX_Golem_Earth_Laydown",action:"alert",source:"creature",entity:"Golem Earth"},
+  {id:"SFX_Golem_Earth_Slam_Impact",action:"attack",source:"creature",entity:"Golem Earth"},
+  {id:"SFX_Golem_Earth_Stomp",action:"attack",source:"creature",entity:"Golem Earth"},
+  {id:"SFX_Golem_Earth_Swing",action:"attack",source:"creature",entity:"Golem Earth"},
+  {id:"SFX_Golem_Earth_Wake",action:"spawn",source:"creature",entity:"Golem Earth"},
+  {id:"SFX_Golem_Firesteel_Alerted_01",action:"alert",source:"creature",entity:"Golem Firesteel"},
+  {id:"SFX_Golem_Firesteel_Alerted_02",action:"alert",source:"creature",entity:"Golem Firesteel"},
+  {id:"SFX_Golem_Firesteel_Death",action:"death",source:"creature",entity:"Golem Firesteel"},
+  {id:"SFX_Golem_Firesteel_Laydown",action:"alert",source:"creature",entity:"Golem Firesteel"},
+  {id:"SFX_Golem_Firesteel_Wake",action:"spawn",source:"creature",entity:"Golem Firesteel"},
+  {id:"SFX_Golem_Frost_Alerted",action:"alert",source:"creature",entity:"Golem Frost"},
+  {id:"SFX_Golem_Frost_Death",action:"death",source:"creature",entity:"Golem Frost"},
+  {id:"SFX_Golem_Frost_Hurt",action:"hurt",source:"creature",entity:"Golem Frost"},
+  {id:"SFX_Golem_Frost_Laydown",action:"alert",source:"creature",entity:"Golem Frost"},
+  {id:"SFX_Golem_Frost_Wake",action:"spawn",source:"creature",entity:"Golem Frost"},
+  {id:"SFX_Golem_Sand_Alerted",action:"alert",source:"creature",entity:"Golem Sand"},
+  {id:"SFX_Golem_Sand_Death",action:"death",source:"creature",entity:"Golem Sand"},
+  {id:"SFX_Golem_Sand_Hurt",action:"hurt",source:"creature",entity:"Golem Sand"},
+  {id:"SFX_Golem_Sand_Laydown",action:"alert",source:"creature",entity:"Golem Sand"},
+  {id:"SFX_Golem_Sand_Wake",action:"spawn",source:"creature",entity:"Golem Sand"},
+  {id:"SFX_Grass_Break",action:"hurt",source:"block",entity:"Grass"},
+  {id:"SFX_Grass_Hit",action:"hurt",source:"block",entity:"Grass"},
+  {id:"SFX_Grass_Land",action:"walk",source:"block",entity:"Grass"},
+  {id:"SFX_Grass_Walk",action:"walk",source:"block",entity:"Grass"},
+  {id:"SFX_Gravel_Break",action:"hurt",source:"block",entity:"Gravel"},
+  {id:"SFX_Gravel_Hit",action:"hurt",source:"block",entity:"Gravel"},
+  {id:"SFX_Gravel_Land",action:"walk",source:"block",entity:"Gravel"},
+  {id:"SFX_Gravel_Walk",action:"walk",source:"block",entity:"Gravel"},
+  {id:"SFX_GunPvP_Assault_Rifle_Bullet_Death",action:"death",source:"magic",entity:"GunPvP Assault Rifle Bullet"},
+  {id:"SFX_GunPvP_Handgun_Bullet_Death",action:"death",source:"magic",entity:"GunPvP Handgun Bullet"},
+  {id:"SFX_Hand_Crossbow_T1_Block_Impact",action:"hurt",source:"weapon",entity:"Hand Crossbow T1"},
+  {id:"SFX_Hand_Crossbow_T1_Raise",action:"misc",source:"weapon",entity:"Hand Crossbow T1 Raise"},
+  {id:"SFX_Hand_Crossbow_T1_Shove",action:"hurt",source:"weapon",entity:"Hand Crossbow T1"},
+  {id:"SFX_Hand_Crossbow_T2_Load",action:"attack",source:"weapon",entity:"Hand Crossbow T2"},
+  {id:"SFX_Hand_Crossbow_T2_Reload_Start",action:"attack",source:"weapon",entity:"Hand Crossbow T2"},
+  {id:"SFX_Handgun_Fire",action:"attack",source:"weapon",entity:"Handgun"},
+  {id:"SFX_Hatchet_T1_Swing_RL_Local",action:"attack",source:"weapon",entity:"Hatchet T1"},
+  {id:"SFX_Hatchet_T2_Impact_Nice",action:"hurt",source:"weapon",entity:"Hatchet T2"},
+  {id:"SFX_Health_Potion_High_Drink",action:"misc",source:"ui",entity:"Health Potion High Drink"},
+  {id:"SFX_Health_Potion_Low_Drink",action:"misc",source:"ui",entity:"Health Potion Low Drink"},
+  {id:"SFX_Hedera_Scream",action:"misc",source:"creature",entity:"Hedera Scream"},
+  {id:"SFX_Hoe_T1_Swing_Down_Local",action:"attack",source:"weapon",entity:"Hoe T1"},
+  {id:"SFX_Hoe_T1_Till",action:"attack",source:"weapon",entity:"Hoe T1"},
+  {id:"SFX_Horse_Alerted",action:"alert",source:"creature",entity:"Horse"},
+  {id:"SFX_Horse_Death",action:"death",source:"creature",entity:"Horse"},
+  {id:"SFX_Horse_Hurt",action:"hurt",source:"creature",entity:"Horse"},
+  {id:"SFX_Horse_Idle",action:"alert",source:"creature",entity:"Horse"},
+  {id:"SFX_Horse_Run",action:"walk",source:"creature",entity:"Horse"},
+  {id:"SFX_Horse_Sleep",action:"alert",source:"creature",entity:"Horse"},
+  {id:"SFX_Horse_Wake",action:"spawn",source:"creature",entity:"Horse"},
+  {id:"SFX_Hyena_Alerted",action:"alert",source:"creature",entity:"Hyena"},
+  {id:"SFX_Hyena_Death",action:"death",source:"creature",entity:"Hyena"},
+  {id:"SFX_Hyena_Hurt",action:"hurt",source:"creature",entity:"Hyena"},
+  {id:"SFX_Hyena_Idle",action:"alert",source:"creature",entity:"Hyena"},
+  {id:"SFX_Ice_Ball_Death",action:"death",source:"magic",entity:"Ice Ball"},
+  {id:"SFX_Ice_Break",action:"hurt",source:"block",entity:"Ice"},
+  {id:"SFX_Ice_Hit",action:"hurt",source:"block",entity:"Ice"},
+  {id:"SFX_Ice_Land",action:"walk",source:"block",entity:"Ice"},
+  {id:"SFX_Ice_Walk",action:"walk",source:"block",entity:"Ice"},
+  {id:"SFX_Klops_Alerted",action:"alert",source:"creature",entity:"Klops"},
+  {id:"SFX_Klops_Death",action:"death",source:"creature",entity:"Klops"},
+  {id:"SFX_Klops_Hurt",action:"hurt",source:"creature",entity:"Klops"},
+  {id:"SFX_Klops_Idle",action:"alert",source:"creature",entity:"Klops"},
+  {id:"SFX_Klops_Run",action:"walk",source:"creature",entity:"Klops"},
+  {id:"SFX_Lamb_Alerted",action:"alert",source:"creature",entity:"Lamb"},
+  {id:"SFX_Lamb_Death",action:"death",source:"creature",entity:"Lamb"},
+  {id:"SFX_Lamb_Hurt",action:"hurt",source:"creature",entity:"Lamb"},
+  {id:"SFX_Larva_Alerted",action:"alert",source:"creature",entity:"Larva"},
+  {id:"SFX_Larva_Death",action:"death",source:"creature",entity:"Larva"},
+  {id:"SFX_Larva_Despawn",action:"death",source:"creature",entity:"Larva"},
+  {id:"SFX_Larva_Hurt",action:"hurt",source:"creature",entity:"Larva"},
+  {id:"SFX_Larva_Spawn",action:"spawn",source:"creature",entity:"Larva"},
+  {id:"SFX_LeavesGround_Break",action:"hurt",source:"block",entity:"LeavesGround"},
+  {id:"SFX_LeavesGround_Hit",action:"hurt",source:"block",entity:"LeavesGround"},
+  {id:"SFX_LeavesGround_Land",action:"walk",source:"block",entity:"LeavesGround"},
+  {id:"SFX_LeavesGround_Walk",action:"walk",source:"block",entity:"LeavesGround"},
+  {id:"SFX_Leaves_Break",action:"hurt",source:"block",entity:"Leaves"},
+  {id:"SFX_Leaves_Hit",action:"hurt",source:"block",entity:"Leaves"},
+  {id:"SFX_Leaves_Walk",action:"walk",source:"block",entity:"Leaves"},
+  {id:"SFX_Leopard_Snow_Alerted",action:"alert",source:"creature",entity:"Leopard Snow"},
+  {id:"SFX_Leopard_Snow_Death",action:"death",source:"creature",entity:"Leopard Snow"},
+  {id:"SFX_Leopard_Snow_Hurt",action:"hurt",source:"creature",entity:"Leopard Snow"},
+  {id:"SFX_Leopard_Snow_Run",action:"walk",source:"creature",entity:"Leopard Snow"},
+  {id:"SFX_Light_Melee_T1_Block",action:"hurt",source:"weapon",entity:"Light Melee T1"},
+  {id:"SFX_Light_Melee_T1_Guard_Hit",action:"hurt",source:"weapon",entity:"Light Melee T1"},
+  {id:"SFX_Light_Melee_T1_Impact",action:"hurt",source:"weapon",entity:"Light Melee T1"},
+  {id:"SFX_Light_Melee_T1_Lunge",action:"attack",source:"weapon",entity:"Light Melee T1"},
+  {id:"SFX_Light_Melee_T1_Shove",action:"hurt",source:"weapon",entity:"Light Melee T1"},
+  {id:"SFX_Light_Melee_T1_Swing",action:"attack",source:"weapon",entity:"Light Melee T1"},
+  {id:"SFX_Light_Melee_T2_Block",action:"hurt",source:"weapon",entity:"Light Melee T2"},
+  {id:"SFX_Light_Melee_T2_Guard_Break",action:"hurt",source:"weapon",entity:"Light Melee T2"},
+  {id:"SFX_Light_Melee_T2_Guard_Hit",action:"hurt",source:"weapon",entity:"Light Melee T2"},
+  {id:"SFX_Light_Melee_T2_Lunge",action:"attack",source:"weapon",entity:"Light Melee T2"},
+  {id:"SFX_Light_Melee_T2_Lunge_Charge",action:"attack",source:"weapon",entity:"Light Melee T2"},
+  {id:"SFX_Light_Melee_T2_Swing",action:"attack",source:"weapon",entity:"Light Melee T2"},
+  {id:"SFX_Longsword_Special_Impact",action:"hurt",source:"weapon",entity:"Longsword Special"},
+  {id:"SFX_Longsword_Special_Swing",action:"attack",source:"weapon",entity:"Longsword Special"},
+  {id:"SFX_Lumbermill_Bench_Close",action:"misc",source:"crafting",entity:"Lumbermill Bench Close"},
+  {id:"SFX_Lumbermill_Bench_Open",action:"spawn",source:"crafting",entity:"Lumbermill Bench"},
+  {id:"SFX_Mace_T1_Block_Impact",action:"hurt",source:"weapon",entity:"Mace T1"},
+  {id:"SFX_Mace_T1_Impact",action:"hurt",source:"weapon",entity:"Mace T1"},
+  {id:"SFX_Mace_T1_Swing",action:"attack",source:"weapon",entity:"Mace T1"},
+  {id:"SFX_Mace_T1_Swing_Charged",action:"attack",source:"weapon",entity:"Mace T1"},
+  {id:"SFX_Mace_T2_Impact",action:"hurt",source:"weapon",entity:"Mace T2"},
+  {id:"SFX_Mace_T2_Signature_Impact",action:"hurt",source:"weapon",entity:"Mace T2 Signature"},
+  {id:"SFX_Mace_T2_Signature_Launch",action:"misc",source:"weapon",entity:"Mace T2 Signature Launch"},
+  {id:"SFX_Mace_T2_Swing",action:"attack",source:"weapon",entity:"Mace T2"},
+  {id:"SFX_Mace_T2_Swing_Charged",action:"attack",source:"weapon",entity:"Mace T2"},
+  {id:"SFX_Memories_Unlock_Local",action:"misc",source:"ui",entity:"Memories Unlock Local"},
+  {id:"SFX_Metal_Break",action:"hurt",source:"block",entity:"Metal"},
+  {id:"SFX_Metal_Build",action:"spawn",source:"block",entity:"Metal"},
+  {id:"SFX_Metal_Hit",action:"hurt",source:"block",entity:"Metal"},
+  {id:"SFX_Metal_Land",action:"walk",source:"block",entity:"Metal"},
+  {id:"SFX_Metal_Walk",action:"walk",source:"block",entity:"Metal"},
+  {id:"SFX_Moose_Bull_Alerted",action:"alert",source:"creature",entity:"Moose Bull"},
+  {id:"SFX_Mouse_Alerted",action:"alert",source:"creature",entity:"Mouse"},
+  {id:"SFX_Mouse_Death",action:"death",source:"creature",entity:"Mouse"},
+  {id:"SFX_Mouse_Flee",action:"misc",source:"creature",entity:"Mouse Flee"},
+  {id:"SFX_Mouse_Hurt",action:"hurt",source:"creature",entity:"Mouse"},
+  {id:"SFX_Mouse_Run",action:"walk",source:"creature",entity:"Mouse"},
+  {id:"SFX_Mouse_Sleep",action:"alert",source:"creature",entity:"Mouse"},
+  {id:"SFX_Mud_Break",action:"hurt",source:"block",entity:"Mud"},
+  {id:"SFX_Mud_Hit",action:"hurt",source:"block",entity:"Mud"},
+  {id:"SFX_Mud_Land",action:"walk",source:"block",entity:"Mud"},
+  {id:"SFX_Mud_Walk",action:"walk",source:"block",entity:"Mud"},
+  {id:"SFX_Mushroom_Break",action:"hurt",source:"block",entity:"Mushroom"},
+  {id:"SFX_Mushroom_Harvest",action:"attack",source:"block",entity:"Mushroom"},
+  {id:"SFX_NPC_Unarmed_Swing",action:"attack",source:"creature",entity:"NPC Unarmed"},
+  {id:"SFX_Ore_Break",action:"hurt",source:"block",entity:"Ore"},
+  {id:"SFX_Ore_Hit",action:"hurt",source:"block",entity:"Ore"},
+  {id:"SFX_Outlander_Hunter_Arrow_Hit",action:"hurt",source:"magic",entity:"Outlander Hunter Arrow"},
+  {id:"SFX_Outlander_Hunter_Arrow_Miss",action:"misc",source:"magic",entity:"Outlander Hunter Arrow Miss"},
+  {id:"SFX_Owl_Alerted",action:"alert",source:"creature",entity:"Owl"},
+  {id:"SFX_Owl_Death",action:"death",source:"creature",entity:"Owl"},
+  {id:"SFX_Owl_Hurt",action:"hurt",source:"creature",entity:"Owl"},
+  {id:"SFX_Pickaxe_T1_Swing_Down_Local",action:"attack",source:"weapon",entity:"Pickaxe T1"},
+  {id:"SFX_Pig_Alerted",action:"alert",source:"creature",entity:"Pig"},
+  {id:"SFX_Pig_Death",action:"death",source:"creature",entity:"Pig"},
+  {id:"SFX_Pig_Hurt",action:"hurt",source:"creature",entity:"Pig"},
+  {id:"SFX_Pig_Run",action:"walk",source:"creature",entity:"Pig"},
+  {id:"SFX_Pig_Walk",action:"walk",source:"creature",entity:"Pig"},
+  {id:"SFX_Pigeon_Death",action:"death",source:"creature",entity:"Pigeon"},
+  {id:"SFX_Pigeon_Hurt",action:"hurt",source:"creature",entity:"Pigeon"},
+  {id:"SFX_Piglet_Alerted",action:"alert",source:"creature",entity:"Piglet"},
+  {id:"SFX_Piglet_Death",action:"death",source:"creature",entity:"Piglet"},
+  {id:"SFX_Piglet_Hurt",action:"hurt",source:"creature",entity:"Piglet"},
+  {id:"SFX_Piglet_Run",action:"walk",source:"creature",entity:"Piglet"},
+  {id:"SFX_Ping",action:"misc",source:"ui",entity:"Ping"},
+  {id:"SFX_Plant_Break",action:"hurt",source:"block",entity:"Plant"},
+  {id:"SFX_Plant_Hit",action:"hurt",source:"block",entity:"Plant"},
+  {id:"SFX_Plant_MoveIn",action:"walk",source:"block",entity:"Plant"},
+  {id:"SFX_Player_Climb_Down",action:"walk",source:"player",entity:"Player"},
+  {id:"SFX_Player_Climb_Side",action:"walk",source:"player",entity:"Player"},
+  {id:"SFX_Player_Climb_Up",action:"walk",source:"player",entity:"Player"},
+  {id:"SFX_Player_Death",action:"death",source:"player",entity:"Player"},
+  {id:"SFX_Player_Death_Drown",action:"death",source:"player",entity:"Player"},
+  {id:"SFX_Player_Fall",action:"walk",source:"player",entity:"Player"},
+  {id:"SFX_Player_Glide_Motion",action:"walk",source:"player",entity:"Player"},
+  {id:"SFX_Player_Glide_Stationary",action:"walk",source:"player",entity:"Player"},
+  {id:"SFX_Player_Hurt",action:"hurt",source:"player",entity:"Player"},
+  {id:"SFX_Player_Hurt_Burn",action:"hurt",source:"player",entity:"Player"},
+  {id:"SFX_Player_Hurt_Drowning",action:"hurt",source:"player",entity:"Player"},
+  {id:"SFX_Player_Hurt_Fall",action:"hurt",source:"player",entity:"Player"},
+  {id:"SFX_Player_Jump",action:"walk",source:"player",entity:"Player"},
+  {id:"SFX_Player_Mantle",action:"walk",source:"player",entity:"Player"},
+  {id:"SFX_Player_Roll",action:"walk",source:"player",entity:"Player"},
+  {id:"SFX_Player_Slide",action:"walk",source:"player",entity:"Player"},
+  {id:"SFX_Player_Swim",action:"walk",source:"player",entity:"Player"},
+  {id:"SFX_Player_Swim_Fast",action:"walk",source:"player",entity:"Player"},
+  {id:"SFX_Player_Swim_Jump",action:"walk",source:"player",entity:"Player"},
+  {id:"SFX_Player_Unarmed_Swing_Left",action:"attack",source:"player",entity:"Player Unarmed"},
+  {id:"SFX_Player_Unarmed_Swing_Right",action:"attack",source:"player",entity:"Player Unarmed"},
+  {id:"SFX_Plushie_Break",action:"hurt",source:"block",entity:"Plushie"},
+  {id:"SFX_Plushie_Build",action:"spawn",source:"block",entity:"Plushie"},
+  {id:"SFX_Poop_Bounce",action:"misc",source:"block",entity:"Poop Bounce"},
+  {id:"SFX_Poop_Break",action:"hurt",source:"block",entity:"Poop"},
+  {id:"SFX_Poop_Hit",action:"hurt",source:"block",entity:"Poop"},
+  {id:"SFX_Poop_Walk",action:"walk",source:"block",entity:"Poop"},
+  {id:"SFX_Portal_Neutral",action:"misc",source:"magic",entity:"Portal Neutral"},
+  {id:"SFX_Portal_Neutral_Open",action:"spawn",source:"magic",entity:"Portal Neutral"},
+  {id:"SFX_Portal_Neutral_Teleport_Local",action:"misc",source:"magic",entity:"Portal Neutral Teleport Local"},
+  {id:"SFX_Potion_Drink_Success",action:"misc",source:"ui",entity:"Potion Drink Success"},
+  {id:"SFX_Projectile_Poop_Hit",action:"hurt",source:"magic",entity:"Projectile Poop"},
+  {id:"SFX_Rabbit_Alerted",action:"alert",source:"creature",entity:"Rabbit"},
+  {id:"SFX_Rabbit_Death",action:"death",source:"creature",entity:"Rabbit"},
+  {id:"SFX_Rabbit_Hurt",action:"hurt",source:"creature",entity:"Rabbit"},
+  {id:"SFX_Rabbit_Run",action:"walk",source:"creature",entity:"Rabbit"},
+  {id:"SFX_Rabbit_Sleep",action:"alert",source:"creature",entity:"Rabbit"},
+  {id:"SFX_Ram_Alerted",action:"alert",source:"creature",entity:"Ram"},
+  {id:"SFX_Ram_Death",action:"death",source:"creature",entity:"Ram"},
+  {id:"SFX_Ram_Hurt",action:"hurt",source:"creature",entity:"Ram"},
+  {id:"SFX_Ram_Run",action:"walk",source:"creature",entity:"Ram"},
+  {id:"SFX_Ram_Sleep",action:"alert",source:"creature",entity:"Ram"},
+  {id:"SFX_Raptor_Cave_Alerted",action:"alert",source:"creature",entity:"Raptor Cave"},
+  {id:"SFX_Raptor_Cave_Idle",action:"alert",source:"creature",entity:"Raptor Cave"},
+  {id:"SFX_Rat_Death",action:"death",source:"creature",entity:"Rat"},
+  {id:"SFX_Rat_Hurt",action:"hurt",source:"creature",entity:"Rat"},
+  {id:"SFX_Raven_Alerted",action:"alert",source:"creature",entity:"Raven"},
+  {id:"SFX_Raven_Death",action:"death",source:"creature",entity:"Raven"},
+  {id:"SFX_Raven_Flee",action:"misc",source:"creature",entity:"Raven Flee"},
+  {id:"SFX_Raven_Hurt",action:"hurt",source:"creature",entity:"Raven"},
+  {id:"SFX_Reeds_MoveIn",action:"walk",source:"block",entity:"Reeds"},
+  {id:"SFX_Rex_Alerted",action:"alert",source:"creature",entity:"Rex"},
+  {id:"SFX_Rex_Bite",action:"attack",source:"creature",entity:"Rex"},
+  {id:"SFX_Rex_Death",action:"death",source:"creature",entity:"Rex"},
+  {id:"SFX_Rex_Hurt",action:"hurt",source:"creature",entity:"Rex"},
+  {id:"SFX_Rex_Walk",action:"walk",source:"creature",entity:"Rex"},
+  {id:"SFX_Rifle_Fire",action:"attack",source:"weapon",entity:"Rifle"},
+  {id:"SFX_Rope_Break",action:"hurt",source:"block",entity:"Rope"},
+  {id:"SFX_Rope_Land",action:"walk",source:"block",entity:"Rope"},
+  {id:"SFX_Rope_Walk",action:"walk",source:"block",entity:"Rope"},
+  {id:"SFX_Rubble_Bounce",action:"misc",source:"magic",entity:"Rubble Bounce"},
+  {id:"SFX_Rubble_Hit",action:"hurt",source:"magic",entity:"Rubble"},
+  {id:"SFX_Sand_Break",action:"hurt",source:"block",entity:"Sand"},
+  {id:"SFX_Sand_Hit",action:"hurt",source:"block",entity:"Sand"},
+  {id:"SFX_Sand_Land",action:"walk",source:"block",entity:"Sand"},
+  {id:"SFX_Sand_Walk",action:"walk",source:"block",entity:"Sand"},
+  {id:"SFX_Scarak_Fighter_Alerted",action:"alert",source:"creature",entity:"Scarak Fighter"},
+  {id:"SFX_Scarak_Fighter_Death",action:"death",source:"creature",entity:"Scarak Fighter"},
+  {id:"SFX_Scarak_Fighter_Hurt",action:"hurt",source:"creature",entity:"Scarak Fighter"},
+  {id:"SFX_Scarak_Seeker_Alerted",action:"alert",source:"creature",entity:"Scarak Seeker"},
+  {id:"SFX_Scarak_Seeker_Death",action:"death",source:"creature",entity:"Scarak Seeker"},
+  {id:"SFX_Scarak_Seeker_Hurt",action:"hurt",source:"creature",entity:"Scarak Seeker"},
+  {id:"SFX_Scarak_Seeker_Spitball_Death",action:"death",source:"creature",entity:"Scarak Seeker Spitball"},
+  {id:"SFX_Scarak_Spitball_Fire",action:"attack",source:"creature",entity:"Scarak Spitball"},
+  {id:"SFX_Scorpion_Alerted",action:"alert",source:"creature",entity:"Scorpion"},
+  {id:"SFX_Scorpion_Death",action:"death",source:"creature",entity:"Scorpion"},
+  {id:"SFX_Scorpion_Run",action:"walk",source:"creature",entity:"Scorpion"},
+  {id:"SFX_Scorpion_Threaten",action:"alert",source:"creature",entity:"Scorpion"},
+  {id:"SFX_Seeds_Place",action:"misc",source:"block",entity:"Seeds Place"},
+  {id:"SFX_Shark_Death",action:"death",source:"creature",entity:"Shark"},
+  {id:"SFX_Shark_Dive",action:"misc",source:"creature",entity:"Shark Dive"},
+  {id:"SFX_Shark_Hurt",action:"hurt",source:"creature",entity:"Shark"},
+  {id:"SFX_Shark_Swim",action:"walk",source:"creature",entity:"Shark"},
+  {id:"SFX_Shears_Activate",action:"attack",source:"weapon",entity:"Shears"},
+  {id:"SFX_Sheep_Alerted",action:"alert",source:"creature",entity:"Sheep"},
+  {id:"SFX_Sheep_Death",action:"death",source:"creature",entity:"Sheep"},
+  {id:"SFX_Sheep_Hurt",action:"hurt",source:"creature",entity:"Sheep"},
+  {id:"SFX_Sheep_Run",action:"walk",source:"creature",entity:"Sheep"},
+  {id:"SFX_Sheep_Sheared",action:"attack",source:"creature",entity:"Sheep"},
+  {id:"SFX_Sheep_Walk",action:"walk",source:"creature",entity:"Sheep"},
+  {id:"SFX_Shield_T1_Break",action:"hurt",source:"weapon",entity:"Shield T1"},
+  {id:"SFX_Shield_T1_Impact",action:"hurt",source:"weapon",entity:"Shield T1"},
+  {id:"SFX_Shield_T1_Raise",action:"misc",source:"weapon",entity:"Shield T1 Raise"},
+  {id:"SFX_Shield_T1_Swing",action:"attack",source:"weapon",entity:"Shield T1"},
+  {id:"SFX_Shield_T2_Impact",action:"hurt",source:"weapon",entity:"Shield T2"},
+  {id:"SFX_Shield_T2_Raise",action:"misc",source:"weapon",entity:"Shield T2 Raise"},
+  {id:"SFX_Shield_T2_Swing",action:"attack",source:"weapon",entity:"Shield T2"},
+  {id:"SFX_Shovel_T1_Swing_RL_Local",action:"attack",source:"weapon",entity:"Shovel T1"},
+  {id:"SFX_Shovel_T2_Impact_Nice",action:"hurt",source:"weapon",entity:"Shovel T2"},
+  {id:"SFX_Skeleton_Alerted",action:"alert",source:"creature",entity:"Skeleton"},
+  {id:"SFX_Skeleton_Death_1",action:"death",source:"creature",entity:"Skeleton"},
+  {id:"SFX_Skeleton_Death_2",action:"death",source:"creature",entity:"Skeleton"},
+  {id:"SFX_Skeleton_Death_3",action:"death",source:"creature",entity:"Skeleton"},
+  {id:"SFX_Skeleton_Death_4",action:"death",source:"creature",entity:"Skeleton"},
+  {id:"SFX_Skeleton_Despawn_1",action:"death",source:"creature",entity:"Skeleton"},
+  {id:"SFX_Skeleton_Despawn_2",action:"death",source:"creature",entity:"Skeleton"},
+  {id:"SFX_Skeleton_Hurt",action:"hurt",source:"creature",entity:"Skeleton"},
+  {id:"SFX_Skeleton_Mage_Spellbook_Charge",action:"attack",source:"creature",entity:"Skeleton Mage Spellbook"},
+  {id:"SFX_Skeleton_Mage_Spellbook_Impact",action:"hurt",source:"creature",entity:"Skeleton Mage Spellbook"},
+  {id:"SFX_Skeleton_Praetorian_Alerted",action:"alert",source:"creature",entity:"Skeleton Praetorian"},
+  {id:"SFX_Skeleton_Praetorian_Death_1",action:"death",source:"creature",entity:"Skeleton Praetorian"},
+  {id:"SFX_Skeleton_Praetorian_Death_2",action:"death",source:"creature",entity:"Skeleton Praetorian"},
+  {id:"SFX_Skeleton_Praetorian_Hurt",action:"hurt",source:"creature",entity:"Skeleton Praetorian"},
+  {id:"SFX_Skeleton_Praetorian_Run",action:"walk",source:"creature",entity:"Skeleton Praetorian"},
+  {id:"SFX_Skeleton_Praetorian_Search_2",action:"alert",source:"creature",entity:"Skeleton Praetorian"},
+  {id:"SFX_Skeleton_Praetorian_Spawn_1",action:"spawn",source:"creature",entity:"Skeleton Praetorian"},
+  {id:"SFX_Skeleton_Praetorian_Walk",action:"walk",source:"creature",entity:"Skeleton Praetorian"},
+  {id:"SFX_Skeleton_Run",action:"walk",source:"creature",entity:"Skeleton"},
+  {id:"SFX_Skeleton_Search_2",action:"alert",source:"creature",entity:"Skeleton"},
+  {id:"SFX_Skeleton_Spawn_1",action:"spawn",source:"creature",entity:"Skeleton"},
+  {id:"SFX_Skeleton_Spawn_2",action:"spawn",source:"creature",entity:"Skeleton"},
+  {id:"SFX_Skeleton_Walk",action:"walk",source:"creature",entity:"Skeleton"},
+  {id:"SFX_Snake_Alerted",action:"alert",source:"creature",entity:"Snake"},
+  {id:"SFX_Snake_Death",action:"death",source:"creature",entity:"Snake"},
+  {id:"SFX_Snake_Hurt",action:"hurt",source:"creature",entity:"Snake"},
+  {id:"SFX_Snake_Idle",action:"alert",source:"creature",entity:"Snake"},
+  {id:"SFX_Snow_Break",action:"hurt",source:"block",entity:"Snow"},
+  {id:"SFX_Snow_Hit",action:"hurt",source:"block",entity:"Snow"},
+  {id:"SFX_Snow_Land",action:"walk",source:"block",entity:"Snow"},
+  {id:"SFX_Snow_Walk",action:"walk",source:"block",entity:"Snow"},
+  {id:"SFX_Soft_Break",action:"hurt",source:"block",entity:"Soft"},
+  {id:"SFX_Soft_Hit",action:"hurt",source:"block",entity:"Soft"},
+  {id:"SFX_Soft_Land",action:"walk",source:"block",entity:"Soft"},
+  {id:"SFX_Soft_Walk",action:"walk",source:"block",entity:"Soft"},
+  {id:"SFX_Spark_Living_Alerted",action:"alert",source:"creature",entity:"Spark Living"},
+  {id:"SFX_Spark_Living_Death",action:"death",source:"creature",entity:"Spark Living"},
+  {id:"SFX_Sparrow_Alerted",action:"alert",source:"creature",entity:"Sparrow"},
+  {id:"SFX_Sparrow_Death",action:"death",source:"creature",entity:"Sparrow"},
+  {id:"SFX_Sparrow_Hurt",action:"hurt",source:"creature",entity:"Sparrow"},
+  {id:"SFX_Sparrow_Idle",action:"alert",source:"creature",entity:"Sparrow"},
+  {id:"SFX_Spawn_Void_Alerted",action:"spawn",source:"creature",entity:"Spawn"},
+  {id:"SFX_Spawn_Void_Death",action:"spawn",source:"creature",entity:"Spawn"},
+  {id:"SFX_Spawn_Void_Hurt",action:"spawn",source:"creature",entity:"Spawn"},
+  {id:"SFX_Spawn_Void_Run",action:"spawn",source:"creature",entity:"Spawn"},
+  {id:"SFX_Spear_Impact",action:"hurt",source:"weapon",entity:"Spear"},
+  {id:"SFX_Spear_Lunge",action:"attack",source:"weapon",entity:"Spear"},
+  {id:"SFX_Spear_Miss",action:"misc",source:"weapon",entity:"Spear Miss"},
+  {id:"SFX_Spear_Projectile_Impact",action:"hurt",source:"weapon",entity:"Spear Projectile"},
+  {id:"SFX_Spear_Throw",action:"attack",source:"weapon",entity:"Spear"},
+  {id:"SFX_Spear_Throw_Charge",action:"attack",source:"weapon",entity:"Spear"},
+  {id:"SFX_Spider_Alerted",action:"alert",source:"creature",entity:"Spider"},
+  {id:"SFX_Spider_Death",action:"death",source:"creature",entity:"Spider"},
+  {id:"SFX_Spider_Run",action:"walk",source:"creature",entity:"Spider"},
+  {id:"SFX_Spirit_Root_Alerted",action:"alert",source:"creature",entity:"Spirit Root"},
+  {id:"SFX_Spirit_Root_Death_01",action:"death",source:"creature",entity:"Spirit Root"},
+  {id:"SFX_Spirit_Root_Death_02",action:"death",source:"creature",entity:"Spirit Root"},
+  {id:"SFX_Spirit_Root_Hurt",action:"hurt",source:"creature",entity:"Spirit Root"},
+  {id:"SFX_Spirit_Root_Spawn",action:"spawn",source:"creature",entity:"Spirit Root"},
+  {id:"SFX_Squirrel_Alerted",action:"alert",source:"creature",entity:"Squirrel"},
+  {id:"SFX_Squirrel_Death",action:"death",source:"creature",entity:"Squirrel"},
+  {id:"SFX_Squirrel_Hurt",action:"hurt",source:"creature",entity:"Squirrel"},
+  {id:"SFX_Squirrel_Run",action:"walk",source:"creature",entity:"Squirrel"},
+  {id:"SFX_Staff_Flame_Consume_Charge_1",action:"attack",source:"magic",entity:"Staff Flame Consume"},
+  {id:"SFX_Staff_Flame_Consume_Charge_2",action:"attack",source:"magic",entity:"Staff Flame Consume"},
+  {id:"SFX_Staff_Flame_Consume_Charge_3",action:"attack",source:"magic",entity:"Staff Flame Consume"},
+  {id:"SFX_Staff_Flame_Consume_Charge_4",action:"attack",source:"magic",entity:"Staff Flame Consume"},
+  {id:"SFX_Staff_Flame_Fireball_Impact",action:"hurt",source:"magic",entity:"Staff Flame Fireball"},
+  {id:"SFX_Staff_Flame_Fireball_Launch",action:"misc",source:"magic",entity:"Staff Flame Fireball Launch"},
+  {id:"SFX_Staff_Flame_Flamethrower",action:"misc",source:"magic",entity:"Staff Flame Flamethrower"},
+  {id:"SFX_Staff_Flame_Flamethrower_End",action:"misc",source:"magic",entity:"Staff Flame Flamethrower End"},
+  {id:"SFX_Staff_Flame_Flamethrower_Impact",action:"hurt",source:"magic",entity:"Staff Flame Flamethrower"},
+  {id:"SFX_Staff_Flame_Trap_Deploy",action:"misc",source:"magic",entity:"Staff Flame Trap Deploy"},
+  {id:"SFX_Staff_Flame_Trap_Despawn",action:"death",source:"magic",entity:"Staff Flame Trap"},
+  {id:"SFX_Staff_Flame_Trap_Loop",action:"loop",source:"magic",entity:"Staff Flame Trap"},
+  {id:"SFX_Staff_Ice_Shoot",action:"attack",source:"magic",entity:"Staff Ice"},
+  {id:"SFX_Stamina_Potion_Success",action:"misc",source:"ui",entity:"Stamina Potion Success"},
+  {id:"SFX_Sticks_Break",action:"hurt",source:"block",entity:"Sticks"},
+  {id:"SFX_Stone_Break",action:"hurt",source:"block",entity:"Stone"},
+  {id:"SFX_Stone_Coffin_Open_Close",action:"spawn",source:"block",entity:"Stone Coffin"},
+  {id:"SFX_Stone_Harvest",action:"attack",source:"block",entity:"Stone"},
+  {id:"SFX_Stone_Hit",action:"hurt",source:"block",entity:"Stone"},
+  {id:"SFX_Stone_Land",action:"walk",source:"block",entity:"Stone"},
+  {id:"SFX_Stone_Walk",action:"walk",source:"block",entity:"Stone"},
+  {id:"SFX_Sword_T1_Swing",action:"attack",source:"weapon",entity:"Sword T1"},
+  {id:"SFX_Sword_T1_Swing_Down",action:"attack",source:"weapon",entity:"Sword T1"},
+  {id:"SFX_Sword_T2_Impact",action:"hurt",source:"weapon",entity:"Sword T2"},
+  {id:"SFX_Sword_T2_Swing",action:"attack",source:"weapon",entity:"Sword T2"},
+  {id:"SFX_Sword_T2_Swing_Down",action:"attack",source:"weapon",entity:"Sword T2"},
+  {id:"SFX_T1_Impact_Blunt",action:"hurt",source:"weapon",entity:"T1"},
+  {id:"SFX_Tall_Grass_MoveIn",action:"walk",source:"block",entity:"Tall Grass"},
+  {id:"SFX_Tetrabird_Alerted",action:"alert",source:"creature",entity:"Tetrabird"},
+  {id:"SFX_Tetrabird_Death",action:"death",source:"creature",entity:"Tetrabird"},
+  {id:"SFX_Tetrabird_Flee",action:"misc",source:"creature",entity:"Tetrabird Flee"},
+  {id:"SFX_Tetrabird_Hurt",action:"hurt",source:"creature",entity:"Tetrabird"},
+  {id:"SFX_Tetrabird_Run",action:"walk",source:"creature",entity:"Tetrabird"},
+  {id:"SFX_Tiger_Sabertooth_Alerted",action:"alert",source:"creature",entity:"Tiger Sabertooth"},
+  {id:"SFX_Tiger_Sabertooth_Death",action:"death",source:"creature",entity:"Tiger Sabertooth"},
+  {id:"SFX_Tiger_Sabertooth_Hurt",action:"hurt",source:"creature",entity:"Tiger Sabertooth"},
+  {id:"SFX_Tiger_Sabertooth_Run",action:"walk",source:"creature",entity:"Tiger Sabertooth"},
+  {id:"SFX_Toad_Rhino_Alerted",action:"alert",source:"creature",entity:"Toad Rhino"},
+  {id:"SFX_Toad_Rhino_Death",action:"death",source:"creature",entity:"Toad Rhino"},
+  {id:"SFX_Toad_Rhino_Hurt",action:"hurt",source:"creature",entity:"Toad Rhino"},
+  {id:"SFX_Toad_Rhino_Magma_Alerted",action:"alert",source:"creature",entity:"Toad Rhino Magma"},
+  {id:"SFX_Toad_Rhino_Magma_Death",action:"death",source:"creature",entity:"Toad Rhino Magma"},
+  {id:"SFX_Toad_Rhino_Magma_Hurt",action:"hurt",source:"creature",entity:"Toad Rhino Magma"},
+  {id:"SFX_Toad_Rhino_Magma_Run",action:"walk",source:"creature",entity:"Toad Rhino Magma"},
+  {id:"SFX_Toad_Rhino_Magma_Tongue_Impact",action:"hurt",source:"creature",entity:"Toad Rhino Magma Tongue"},
+  {id:"SFX_Toad_Rhino_Magma_Tongue_Whoosh",action:"misc",source:"creature",entity:"Toad Rhino Magma Tongue Whoosh"},
+  {id:"SFX_Toad_Rhino_Run",action:"walk",source:"creature",entity:"Toad Rhino"},
+  {id:"SFX_Toad_Rhino_Tongue_Impact",action:"hurt",source:"creature",entity:"Toad Rhino Tongue"},
+  {id:"SFX_Toad_Rhino_Tongue_Whoosh",action:"misc",source:"creature",entity:"Toad Rhino Tongue Whoosh"},
+  {id:"SFX_Tool_T1_Swing",action:"attack",source:"weapon",entity:"Tool T1"},
+  {id:"SFX_Tool_Watering_Can_Water",action:"attack",source:"weapon",entity:"Tool Watering Can"},
+  {id:"SFX_Torch_Default_Loop",action:"loop",source:"ui",entity:"Torch Default"},
+  {id:"SFX_Torch_Impact",action:"hurt",source:"weapon",entity:"Torch"},
+  {id:"SFX_Torch_Off",action:"misc",source:"ui",entity:"Torch Off"},
+  {id:"SFX_Torch_On_Loop",action:"loop",source:"ui",entity:"Torch On"},
+  {id:"SFX_Torch_Swing",action:"attack",source:"weapon",entity:"Torch"},
+  {id:"SFX_Tornado",action:"misc",source:"magic",entity:"Tornado"},
+  {id:"SFX_Trashpile_Land",action:"walk",source:"block",entity:"Trashpile"},
+  {id:"SFX_Trashpile_Walk",action:"walk",source:"block",entity:"Trashpile"},
+  {id:"SFX_Trork_Alerted",action:"alert",source:"creature",entity:"Trork"},
+  {id:"SFX_Trork_Death",action:"death",source:"creature",entity:"Trork"},
+  {id:"SFX_Trork_Hurt_01",action:"hurt",source:"creature",entity:"Trork"},
+  {id:"SFX_Trork_Hurt_02",action:"hurt",source:"creature",entity:"Trork"},
+  {id:"SFX_Trork_Run",action:"walk",source:"creature",entity:"Trork"},
+  {id:"SFX_Trork_Sleep",action:"alert",source:"creature",entity:"Trork"},
+  {id:"SFX_Trork_Throwing_Axe",action:"misc",source:"creature",entity:"Trork Throwing Axe"},
+  {id:"SFX_Unarmed_Impact",action:"hurt",source:"weapon",entity:"Unarmed"},
+  {id:"SFX_Unarmed_Swing",action:"attack",source:"weapon",entity:"Unarmed"},
+  {id:"SFX_Unbreakable_Block",action:"hurt",source:"ui",entity:"Unbreakable"},
+  {id:"SFX_Vulture_Alerted",action:"alert",source:"creature",entity:"Vulture"},
+  {id:"SFX_Vulture_Death",action:"death",source:"creature",entity:"Vulture"},
+  {id:"SFX_Vulture_Flee",action:"misc",source:"creature",entity:"Vulture Flee"},
+  {id:"SFX_Vulture_Hurt",action:"hurt",source:"creature",entity:"Vulture"},
+  {id:"SFX_Warthog_Alerted",action:"alert",source:"creature",entity:"Warthog"},
+  {id:"SFX_Warthog_Death",action:"death",source:"creature",entity:"Warthog"},
+  {id:"SFX_Warthog_Hurt",action:"hurt",source:"creature",entity:"Warthog"},
+  {id:"SFX_Warthog_Piglet_Alerted",action:"alert",source:"creature",entity:"Warthog Piglet"},
+  {id:"SFX_Warthog_Piglet_Death",action:"death",source:"creature",entity:"Warthog Piglet"},
+  {id:"SFX_Warthog_Piglet_Hurt",action:"hurt",source:"creature",entity:"Warthog Piglet"},
+  {id:"SFX_Warthog_Piglet_Run",action:"walk",source:"creature",entity:"Warthog Piglet"},
+  {id:"SFX_Warthog_Run",action:"walk",source:"creature",entity:"Warthog"},
+  {id:"SFX_Warthog_Sleep",action:"alert",source:"creature",entity:"Warthog"},
+  {id:"SFX_Warthog_Walk",action:"walk",source:"creature",entity:"Warthog"},
+  {id:"SFX_Water_MoveIn",action:"attack",source:"block",entity:"Water"},
+  {id:"SFX_Water_MoveOut",action:"attack",source:"block",entity:"Water"},
+  {id:"SFX_Weapon_Bench_Close",action:"misc",source:"crafting",entity:"Weapon Bench Close"},
+  {id:"SFX_Weapon_Bench_Craft",action:"misc",source:"crafting",entity:"Weapon Bench Craft"},
+  {id:"SFX_Weapon_Bench_Open",action:"spawn",source:"crafting",entity:"Weapon Bench"},
+  {id:"SFX_Weapon_Charge_Swing",action:"attack",source:"weapon",entity:"Weapon"},
+  {id:"SFX_Web_MoveIn",action:"walk",source:"block",entity:"Web"},
+  {id:"SFX_Window_Break",action:"hurt",source:"block",entity:"Window"},
+  {id:"SFX_Window_Stone_Break",action:"hurt",source:"block",entity:"Window Stone"},
+  {id:"SFX_Wisp_Lamp_Loop",action:"loop",source:"ui",entity:"Wisp Lamp"},
+  {id:"SFX_Wolf_Alerted",action:"alert",source:"creature",entity:"Wolf"},
+  {id:"SFX_Wolf_Death",action:"death",source:"creature",entity:"Wolf"},
+  {id:"SFX_Wolf_Hurt",action:"hurt",source:"creature",entity:"Wolf"},
+  {id:"SFX_Wolf_Run",action:"walk",source:"creature",entity:"Wolf"},
+  {id:"SFX_Wolf_Sleep",action:"alert",source:"creature",entity:"Wolf"},
+  {id:"SFX_Wood_Break",action:"hurt",source:"block",entity:"Wood"},
+  {id:"SFX_Wood_Build",action:"spawn",source:"block",entity:"Wood"},
+  {id:"SFX_Wood_Hit",action:"hurt",source:"block",entity:"Wood"},
+  {id:"SFX_Wood_Land",action:"walk",source:"block",entity:"Wood"},
+  {id:"SFX_Wood_Walk",action:"walk",source:"block",entity:"Wood"},
+  {id:"SFX_Workbench_Close",action:"misc",source:"crafting",entity:"Workbench Close"},
+  {id:"SFX_Workbench_Craft",action:"misc",source:"crafting",entity:"Workbench Craft"},
+  {id:"SFX_Workbench_Open",action:"spawn",source:"crafting",entity:"Workbench"},
+  {id:"SFX_Workbench_Upgrade_Complete_Default",action:"misc",source:"crafting",entity:"Workbench Upgrade Complete Default"},
+  {id:"SFX_Workbench_Upgrade_Start_Default",action:"misc",source:"crafting",entity:"Workbench Upgrade Start Default"},
+  {id:"SFX_Yeti_Alerted",action:"alert",source:"creature",entity:"Yeti"},
+  {id:"SFX_Zombie_Alerted",action:"alert",source:"creature",entity:"Zombie"},
+  {id:"SFX_Zombie_Attack_Swing",action:"attack",source:"creature",entity:"Zombie"},
+  {id:"SFX_Zombie_Death",action:"death",source:"creature",entity:"Zombie"},
+  {id:"SFX_Zombie_Despawn",action:"death",source:"creature",entity:"Zombie"},
+  {id:"SFX_Zombie_Hurt",action:"hurt",source:"creature",entity:"Zombie"},
+  {id:"SFX_Zombie_Pursuit",action:"misc",source:"creature",entity:"Zombie Pursuit"},
+  {id:"SFX_Zombie_Spawn",action:"spawn",source:"creature",entity:"Zombie"}
+];
+
+// ===== META OBJECTS =====
+const ACTION_META = {
+  death:{label:'Death / Despawn',color:'var(--death)',bg:'rgba(239,68,68,0.05)'},
+  hurt:{label:'Hurt / Impact',color:'var(--hurt)',bg:'rgba(245,158,11,0.05)'},
+  alert:{label:'Alerted / Idle',color:'var(--alert)',bg:'rgba(249,115,22,0.05)'},
+  spawn:{label:'Spawn / Wake',color:'var(--spawn)',bg:'rgba(34,197,94,0.05)'},
+  walk:{label:'Walk / Run',color:'var(--walk)',bg:'rgba(107,114,128,0.05)'},
+  attack:{label:'Attack / Swing',color:'var(--attack)',bg:'rgba(59,130,246,0.05)'},
+  loop:{label:'Loops / Ambient',color:'var(--loop)',bg:'rgba(168,85,247,0.05)'},
+  misc:{label:'Other / Misc',color:'var(--misc)',bg:'rgba(139,92,246,0.05)'}
+};
+const SOURCE_META = {
+  creature:{label:'Creatures',color:'var(--cat-creature)'},
+  weapon:{label:'Weapons',color:'var(--cat-weapon)'},
+  magic:{label:'Magic',color:'var(--cat-magic)'},
+  block:{label:'Blocks',color:'var(--cat-block)'},
+  player:{label:'Player',color:'var(--cat-player)'},
+  ui:{label:'UI / Environment',color:'var(--cat-ui)'},
+  crafting:{label:'Crafting',color:'var(--cat-crafting)'},
+  other:{label:'Other',color:'var(--misc)'}
+};
+const ACTION_ORDER = ['death','hurt','alert','spawn','walk','attack','loop','misc'];
+const SOURCE_ORDER = ['creature','weapon','magic','block','player','ui','crafting','other'];
+
+// ===== ZONE DATA =====
+const ZONE_ORDER = ['Zone 1','Zone 2','Zone 3','Zone 4','World','Portal'];
+const ENTITY_ZONES = {
+  "Bat":["Zone 1","Zone 2","Zone 4","World"],
+  "Bear Grizzly":["World"],"Bear":["World"],
+  "Crawler Void":["Portal","World"],"Crocodile":["World"],
+  "Dragon":["World"],"Eye Void":["Portal"],
+  "Feran":["World"],"Fish Flee":["World","Zone 3"],"Fish":["World","Zone 3"],
+  "Fox":["Zone 1","World"],
+  "Goblin":["World","Zone 1","Zone 2","Zone 3"],"Goblin Lobber Bomb":["World","Zone 1","Zone 2","Zone 3"],"Goblin Lobber Bomb Bounce":["World","Zone 1","Zone 2","Zone 3"],"Goblin Lobber Bomb Miss":["World","Zone 1","Zone 2","Zone 3"],
+  "Golem Earth":["World"],"Golem Firesteel":["Zone 1","Zone 2","Zone 4","World"],"Golem Frost":["World"],"Golem Sand":["World"],
+  "Hedera Scream":["World"],"Hyena":["World"],
+  "Klops":["World"],"Larva":["Zone 1","Portal"],
+  "Rabbit":["World"],"Raptor Cave":["World"],
+  "Rat":["Zone 1","Zone 2","Zone 3","Zone 4","World"],
+  "Raven Flee":["World"],"Raven":["World"],"Rex":["World"],
+  "Scarak Fighter":["World"],"Scarak Seeker Spitball":["World"],"Scarak Seeker":["World"],"Scarak Spitball":["World"],
+  "Scorpion":["Zone 2","World"],
+  "Shark Dive":["World"],"Shark":["World"],"Sheep":["World"],
+  "Skeleton Mage Spellbook":["Zone 1","World"],"Skeleton Praetorian":["World"],"Skeleton":["World"],
+  "Snake":["Zone 2","World"],"Spark Living":["Zone 1","Zone 2","Zone 4"],
+  "Spawn":["Portal","World"],"Spirit Root":["Zone 1","World"],
+  "Toad Rhino Magma Tongue Whoosh":["Zone 1","Zone 2","Zone 4","World"],"Toad Rhino Magma Tongue":["Zone 1","Zone 2","Zone 4","World"],
+  "Toad Rhino Magma":["Zone 1","Zone 2","Zone 4","World"],"Toad Rhino Tongue Whoosh":["World"],"Toad Rhino Tongue":["World"],"Toad Rhino":["World"],
+  "Trork Throwing Axe":["World"],"Trork":["World","Zone 1"],
+  "Wolf":["World"],"Yeti":["World"],
+  "Zombie Pursuit":["Zone 4","World"],"Zombie":["Zone 4","World"]
+};
+
+function getSoundZones(s) {
+  return ENTITY_ZONES[s.entity] || [];
+}
+
+// ===== UNIFIED SUBCATEGORIES FOR ALL SOURCES =====
+const SOURCE_SUBCATS = {
+  creature: {
+    'Passive Animals': ['Antelope','Bat','Bison','Bunny','Calf','Camel','Chick','Chicken','Cow','Crow','Deer Doe','Deer Stag','Deer','Dragon','Duck','Fish','Flamingo','Fox','Frog','Gecko','Goat','Horse','Lamb','Leopard Snow','Moose Bull','Mouse','Owl','Pig','Pigeon','Piglet','Rabbit','Ram','Rat','Raven','Sheep','Sparrow','Squirrel','Tetrabird','Vulture','Warthog','Warthog Piglet'],
+    'Hostile Mobs': ['Goblin','Hyena','Scorpion','Snake','Spider','Trork','Wolf','Crocodile','Emberwulf','Fen Stalker','Rex','Tiger Sabertooth','Toad Rhino','Toad Rhino Magma','Bear Grizzly','Bear','Boar','Raptor Cave','Shark'],
+    'Undead': ['Skeleton','Skeleton Mage','Skeleton Praetorian','Zombie'],
+    'Void Creatures': ['Crawler Void','Eye Void','Spawn Void','Spawn','Spark Living'],
+    'Bosses & Elites': ['Golem Earth','Golem Firesteel','Golem Frost','Golem Sand','Yeti','Klops'],
+    'Nature & Elemental': ['Spirit Root','Hedera','Feran','Larva','Scarak Fighter','Scarak Seeker','Scarak']
+  },
+  weapon: {
+    'Swords & Daggers': ['Sword T1','Sword T2','Daggers T1','Daggers T2','Longsword Special','Light Melee T1','Light Melee T2'],
+    'Heavy Melee': ['Mace T1','Mace T2','Club Wood','Club Steel','Club Special','Flail'],
+    'Axes & Tools': ['Axe Crude','Axe Iron','Axe Special','Hatchet T1','Hatchet T2','Pickaxe T1','Shovel T1','Shovel T2','Hoe T1','Tool T1','Tool Watering Can','Shears'],
+    'Ranged': ['Bow T1','Bow T2','Bow','Hand Crossbow T1','Hand Crossbow T2','Blunderbuss','Handgun','Rifle','Spear','Arrow'],
+    'Shields & Defense': ['Shield T1','Shield T2'],
+    'Other Weapons': ['Torch','Weapon','Unarmed','T1']
+  },
+  magic: {
+    'Staff Spells': ['Staff Flame','Staff Ice'],
+    'Projectiles': ['Fireball','Ice Ball','Egg','Rubble','Projectile Poop','Goblin Lobber Bomb','Bomb','Outlander Hunter Arrow','GunPvP Assault Rifle Bullet','GunPvP Handgun Bullet'],
+    'Portals & Teleport': ['Portal Neutral'],
+    'Deployables': ['Deployable Totem Heal','Deployable Totem Slowing'],
+    'Status Effects': ['Effect Burn','Effect Poison','Tornado']
+  },
+  block: {
+    'Natural': ['Dirt','Grass','Gravel','Sand','Snow','Mud','Stone','Ice','Ore','Gem','Crystal'],
+    'Wood & Plants': ['Wood','Branch','Sticks','Bush','Fern','Plant','Tall Grass','Reeds','Leaves','LeavesGround','Mushroom','Seeds Place','Cocoon','Eggsac','Cactus','Cactus Large','Cactus Small','Bramble'],
+    'Crafted & Metal': ['Metal','Glass','Cloth','Rope','Bone','Web','Window','Window Stone'],
+    'Containers & Furniture': ['Coins','Clay Pot Large','Clay Pot Small','Plushie','Poop','Trashpile','Stone Coffin'],
+    'Special Blocks': ['Default','Soft','Water','Flame']
+  },
+  ui: {
+    'Powers & Abilities': ['Avatar Powers Enable','Avatar Powers Disable','Avatar Powers Enable Local','Avatar Powers Disable Local','Divine Respawn','Memories Unlock Local'],
+    'Consumables': ['Health Potion High Drink','Health Potion Low Drink','Stamina Potion Success','Potion Drink Success','Consume Bread Local'],
+    'Doors': ['Door Ancient','Door Crude','Door Desert','Door Jungle','Door Lumberjack','Door Temple Dark','Door Temple Light','Door Wooden'],
+    'Light Sources': ['Torch Default','Torch Off','Torch On','Candle Default','Candle Off','Wisp Lamp','Brazier','Campfire'],
+    'Containers': ['Chest Wooden'],
+    'Environment': ['Env','Crops','Unbreakable','Ping','Cauldron'],
+    'Crafting Feedback': ['Generic Crafting Failed']
+  },
+  crafting: {
+    'Workbenches': ['Workbench','Arcane Workbench','Weapon Bench','Armour Bench','Lumbermill Bench'],
+    'Processing': ['Furnace Bench','Campfire','Alchemy Bench'],
+    'Generic': ['Bench Placeholder']
+  },
+  player: {
+    'Movement': ['Player'],
+    'Combat & Damage': ['Player Unarmed']
+  }
+};
+
+// Subcategory display order per source
+const SOURCE_SUBCAT_ORDER = {
+  creature: ['Passive Animals','Hostile Mobs','Undead','Void Creatures','Bosses & Elites','Nature & Elemental','NPCs & Other'],
+  weapon: ['Swords & Daggers','Heavy Melee','Axes & Tools','Ranged','Shields & Defense','Other Weapons'],
+  magic: ['Staff Spells','Projectiles','Portals & Teleport','Deployables','Status Effects','Other Magic'],
+  block: ['Natural','Wood & Plants','Crafted & Metal','Containers & Furniture','Special Blocks','Other Blocks'],
+  ui: ['Powers & Abilities','Consumables','Doors','Light Sources','Containers','Environment','Crafting Feedback','Other UI'],
+  crafting: ['Workbenches','Processing','Generic','Other Crafting'],
+  player: ['Movement','Combat & Damage','Other Player']
+};
+
+// Icons per subcategory per source
+const SOURCE_SUBCAT_ICONS = {
+  creature: {
+    'Passive Animals': '\uD83D\uDC3E',
+    'Hostile Mobs': '\u2694\uFE0F',
+    'Undead': '\uD83D\uDC80',
+    'Void Creatures': '\uD83C\uDF00',
+    'Bosses & Elites': '\uD83D\uDC51',
+    'Nature & Elemental': '\uD83C\uDF3F',
+    'NPCs & Other': '\uD83D\uDC64'
+  },
+  weapon: {
+    'Swords & Daggers': '\uD83D\uDDE1\uFE0F',
+    'Heavy Melee': '\uD83D\uDD28',
+    'Axes & Tools': '\uD83E\uDE93',
+    'Ranged': '\uD83C\uDFF9',
+    'Shields & Defense': '\uD83D\uDEE1\uFE0F',
+    'Other Weapons': '\uD83D\uDD25'
+  },
+  magic: {
+    'Staff Spells': '\uD83E\uDE84',
+    'Projectiles': '\uD83D\uDCA5',
+    'Portals & Teleport': '\uD83C\uDF00',
+    'Deployables': '\uD83E\uDDFF',
+    'Status Effects': '\u2728'
+  },
+  block: {
+    'Natural': '\u26F0\uFE0F',
+    'Wood & Plants': '\uD83C\uDF3F',
+    'Crafted & Metal': '\u2699\uFE0F',
+    'Containers & Furniture': '\uD83D\uDCE6',
+    'Special Blocks': '\uD83D\uDD33'
+  },
+  ui: {
+    'Powers & Abilities': '\u26A1',
+    'Consumables': '\uD83E\uDDEA',
+    'Doors': '\uD83D\uDEAA',
+    'Light Sources': '\uD83D\uDD6F\uFE0F',
+    'Containers': '\uD83D\uDCE6',
+    'Environment': '\uD83C\uDF0D',
+    'Crafting Feedback': '\u274C'
+  },
+  crafting: {
+    'Workbenches': '\uD83D\uDD27',
+    'Processing': '\uD83D\uDD25',
+    'Generic': '\uD83D\uDCCB'
+  },
+  player: {
+    'Movement': '\uD83C\uDFC3',
+    'Combat & Damage': '\uD83D\uDCA2'
+  }
+};
+
+// Default "Other" subcategory name per source
+const SOURCE_SUBCAT_OTHER = {
+  creature: 'NPCs & Other',
+  weapon: 'Other Weapons',
+  magic: 'Other Magic',
+  block: 'Other Blocks',
+  ui: 'Other UI',
+  crafting: 'Other Crafting',
+  player: 'Other Player'
+};
+
+// Build reverse lookup: source -> { entity name -> subcategory } (with prefix matching)
+const SOURCE_ENTITY_TO_SUBCAT = {};
+Object.entries(SOURCE_SUBCATS).forEach(function([source, subcats]) {
+  SOURCE_ENTITY_TO_SUBCAT[source] = {};
+  Object.entries(subcats).forEach(function([subcat, entities]) {
+    entities.forEach(function(e) { SOURCE_ENTITY_TO_SUBCAT[source][e] = subcat; });
+  });
+});
+
+function getSubcat(source, entityName) {
+  var lookup = SOURCE_ENTITY_TO_SUBCAT[source];
+  if (!lookup) return SOURCE_SUBCAT_OTHER[source] || 'Other';
+  // Exact match first
+  if (lookup[entityName]) return lookup[entityName];
+  // Prefix match: e.g. "Toad Rhino Magma Tongue Whoosh" matches "Toad Rhino Magma"
+  // Try longest prefix first
+  var keys = Object.keys(lookup).sort(function(a, b) { return b.length - a.length; });
+  for (var i = 0; i < keys.length; i++) {
+    if (entityName.indexOf(keys[i]) === 0) return lookup[keys[i]];
+  }
+  return SOURCE_SUBCAT_OTHER[source] || 'Other';
+}
+
+// Backwards compatibility wrapper
+function getCreatureSubcat(entityName) {
+  return getSubcat('creature', entityName);
+}
+
+// Color mapping for subcategory styling per source
+const SOURCE_SUBCAT_COLORS = {
+  creature: { var: 'var(--cat-creature)', bg: 'rgba(34,197,94,0.10)' },
+  weapon: { var: 'var(--cat-weapon)', bg: 'rgba(59,130,246,0.10)' },
+  magic: { var: 'var(--cat-magic)', bg: 'rgba(168,85,247,0.10)' },
+  block: { var: 'var(--cat-block)', bg: 'rgba(107,114,128,0.10)' },
+  player: { var: 'var(--cat-player)', bg: 'rgba(245,158,11,0.10)' },
+  ui: { var: 'var(--cat-ui)', bg: 'rgba(240,192,64,0.10)' },
+  crafting: { var: 'var(--cat-crafting)', bg: 'rgba(239,68,68,0.10)' }
+};
+
+// Check if a source has subcategories defined
+function sourceHasSubcats(source) {
+  return !!(SOURCE_SUBCATS[source] && Object.keys(SOURCE_SUBCATS[source]).length > 0);
+}
+
+// ===== SUBCATEGORY STATE =====
+let activeSubcat = null;
+
+// ===== THEME (runs early to prevent flash) =====
+function initTheme() {
+  var saved = localStorage.getItem('theme');
+  if (saved) {
+    document.documentElement.dataset.theme = saved;
+  } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+    document.documentElement.dataset.theme = 'light';
+  }
+  updateThemeIcon();
+}
+
+function toggleTheme() {
+  var current = document.documentElement.dataset.theme;
+  var next = current === 'light' ? 'dark' : 'light';
+  document.documentElement.dataset.theme = next;
+  localStorage.setItem('theme', next);
+  updateThemeIcon();
+}
+
+function updateThemeIcon() {
+  var btn = document.getElementById('theme-toggle');
+  if (!btn) return;
+  var isLight = document.documentElement.dataset.theme === 'light';
+  btn.textContent = isLight ? '\uD83C\uDF19' : '\u2600\uFE0F';
+  btn.title = isLight ? 'Switch to dark mode' : 'Switch to light mode';
+}
+
+initTheme();
+
+window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', function(e) {
+  if (!localStorage.getItem('theme')) {
+    document.documentElement.dataset.theme = e.matches ? 'light' : 'dark';
+    updateThemeIcon();
+  }
+});
+
+// ===== STATE =====
+let currentView = 'action';
+let activeAction = null;
+let activeSource = null;
+let activeZone = null;
+let searchQuery = '';
+let copyFormat = '2d';
+
+// ===== SVGs =====
+const COPY_SVG = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="8" height="8" rx="1.5"/><path d="M3 11V3a1.5 1.5 0 011.5-1.5H11"/></svg>';
+const CHECK_SVG = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8.5l3.5 3.5 6.5-7"/></svg>';
+const CHEVRON_SVG = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l4 4-4 4"/></svg>';
+
+// ===== DOM REFS =====
+const $sidebar = document.getElementById('sidebar');
+const $sidebarActions = document.getElementById('sidebar-actions');
+const $sidebarSources = document.getElementById('sidebar-sources');
+const $sidebarZones = document.getElementById('sidebar-zones');
+const $content = document.getElementById('content');
+const $emptyState = document.getElementById('empty-state');
+const $search = document.getElementById('search');
+const $counterBadge = document.getElementById('counter-badge');
+const $viewInfo = document.getElementById('view-info');
+const $catPills = document.getElementById('cat-pills');
+const $toast = document.getElementById('toast');
+
+// ===== COUNTS =====
+function countBy(arr, key) {
+  const map = {};
+  arr.forEach(function(s) { map[s[key]] = (map[s[key]] || 0) + 1; });
+  return map;
+}
+const actionCounts = countBy(SOUNDS, 'action');
+const sourceCounts = countBy(SOUNDS, 'source');
+
+// Count sounds per zone (sounds can appear in multiple zones)
+function countZoneSounds(arr) {
+  var map = {};
+  arr.forEach(function(s) {
+    var zones = getSoundZones(s);
+    zones.forEach(function(z) { map[z] = (map[z] || 0) + 1; });
+  });
+  return map;
+}
+const zoneCounts = countZoneSounds(SOUNDS);
+
+// ===== EXTRACT ACTION TAG from SFX ID =====
+function extractActionTag(sfxId, entity) {
+  // Remove SFX_ prefix
+  var rest = sfxId.replace(/^SFX_/, '');
+  // Remove the entity part (convert entity spaces to underscores for matching)
+  var entityUnder = entity.replace(/ /g, '_');
+  if (rest.indexOf(entityUnder) === 0) {
+    var tag = rest.substring(entityUnder.length);
+    if (tag.charAt(0) === '_') tag = tag.substring(1);
+    if (tag) return tag.replace(/_/g, ' ').toLowerCase();
+  }
+  // Fallback: take last segment(s) after known patterns
+  var parts = rest.split('_');
+  // Return the last meaningful segment
+  return parts[parts.length - 1].toLowerCase();
+}
+
+// ===== SIDEBAR RENDERING =====
+function renderSidebar() {
+  // Actions
+  var html = '<div class="sidebar-item' + (activeAction === null ? ' active' : '') + '" data-action="">' +
+    '<span class="sidebar-dot" style="background:var(--accent);"></span>' +
+    'All Actions' +
+    '<span class="sidebar-count">' + SOUNDS.length + '</span></div>';
+  ACTION_ORDER.forEach(function(a) {
+    var meta = ACTION_META[a];
+    var count = actionCounts[a] || 0;
+    html += '<div class="sidebar-item' + (activeAction === a ? ' active' : '') + '" data-action="' + a + '">' +
+      '<span class="sidebar-dot" style="background:' + meta.color + ';"></span>' +
+      meta.label +
+      '<span class="sidebar-count">' + count + '</span></div>';
+  });
+  $sidebarActions.innerHTML = html;
+
+  // Sources
+  html = '<div class="sidebar-item' + (activeSource === null ? ' active' : '') + '" data-source="">' +
+    '<span class="sidebar-dot" style="background:var(--accent);"></span>' +
+    'All Sources' +
+    '<span class="sidebar-count">' + SOUNDS.length + '</span></div>';
+  SOURCE_ORDER.forEach(function(src) {
+    var meta = SOURCE_META[src];
+    var count = sourceCounts[src] || 0;
+    if (count === 0) return;
+    html += '<div class="sidebar-item' + (activeSource === src ? ' active' : '') + '" data-source="' + src + '">' +
+      '<span class="sidebar-dot" style="background:' + meta.color + ';"></span>' +
+      meta.label +
+      '<span class="sidebar-count">' + count + '</span></div>';
+  });
+  $sidebarSources.innerHTML = html;
+
+  // Wire action clicks
+  $sidebarActions.querySelectorAll('.sidebar-item').forEach(function(el) {
+    el.addEventListener('click', function() {
+      var val = el.dataset.action;
+      activeAction = val === '' ? null : val;
+      renderSidebar();
+      renderSourcePills();
+      renderCurrentView();
+    });
+  });
+
+  // Wire source clicks
+  $sidebarSources.querySelectorAll('.sidebar-item').forEach(function(el) {
+    el.addEventListener('click', function() {
+      var val = el.dataset.source;
+      activeSource = val === '' ? null : val;
+      activeSubcat = null; // reset subcategory when changing source
+      renderSidebar();
+      renderSourcePills();
+      renderCurrentView();
+    });
+  });
+
+  // Zones
+  var soundsWithZone = SOUNDS.filter(function(s) { return getSoundZones(s).length > 0; }).length;
+  html = '<div class="sidebar-item' + (activeZone === null ? ' active' : '') + '" data-zone="">' +
+    '<span class="sidebar-dot" style="background:var(--accent);"></span>' +
+    'All Zones' +
+    '<span class="sidebar-count">' + soundsWithZone + '</span></div>';
+  ZONE_ORDER.forEach(function(zone) {
+    var count = zoneCounts[zone] || 0;
+    if (count === 0) return;
+    html += '<div class="sidebar-item' + (activeZone === zone ? ' active' : '') + '" data-zone="' + zone + '">' +
+      '<span class="sidebar-dot" style="background:var(--accent);opacity:0.6;"></span>' +
+      zone +
+      '<span class="sidebar-count">' + count + '</span></div>';
+  });
+  $sidebarZones.innerHTML = html;
+
+  // Wire zone clicks
+  $sidebarZones.querySelectorAll('.sidebar-item').forEach(function(el) {
+    el.addEventListener('click', function() {
+      var val = el.dataset.zone;
+      activeZone = val === '' ? null : val;
+      renderSidebar();
+      renderSourcePills();
+      renderCurrentView();
+    });
+  });
+
+}
+
+// ===== SOURCE PILLS =====
+function renderSourcePills() {
+  var html = '<button class="cat-pill' + (activeSource === null ? ' active' : '') + '" data-source="">All <span class="cat-pill-count">' + SOUNDS.length + '</span></button>';
+  SOURCE_ORDER.forEach(function(src) {
+    var meta = SOURCE_META[src];
+    var count = sourceCounts[src] || 0;
+    if (count === 0) return;
+    html += '<button class="cat-pill' + (activeSource === src ? ' active' : '') + '" data-source="' + src + '">' +
+      '<span class="cat-pill-dot" style="background:' + meta.color + ';"></span>' +
+      meta.label +
+      ' <span class="cat-pill-count">' + count + '</span></button>';
+  });
+  $catPills.innerHTML = html;
+
+  $catPills.querySelectorAll('.cat-pill').forEach(function(el) {
+    el.addEventListener('click', function() {
+      var val = el.dataset.source;
+      activeSource = val === '' ? null : val;
+      activeSubcat = null; // reset subcategory when changing source
+      renderSidebar();
+      renderSourcePills();
+      renderCurrentView();
+    });
+  });
+
+  renderSubcatPills();
+}
+
+// ===== SUBCATEGORY PILLS =====
+function renderSubcatPills() {
+  var $subcatPills = document.getElementById('subcat-pills');
+  if (!$subcatPills) {
+    // Create the container after cat-pills if it doesn't exist
+    $subcatPills = document.createElement('div');
+    $subcatPills.id = 'subcat-pills';
+    $subcatPills.className = 'subcat-pills';
+    $catPills.parentNode.insertBefore($subcatPills, $catPills.nextSibling);
+  }
+
+  // Show subcategory pills when a source with subcats is active
+  var showSubcats = activeSource && sourceHasSubcats(activeSource);
+  if (!showSubcats) {
+    $subcatPills.innerHTML = '';
+    $subcatPills.style.display = 'none';
+    return;
+  }
+
+  var srcColors = SOURCE_SUBCAT_COLORS[activeSource] || SOURCE_SUBCAT_COLORS.creature;
+  $subcatPills.style.display = 'flex';
+  $subcatPills.style.setProperty('--subcat-color', srcColors.var);
+  $subcatPills.style.setProperty('--subcat-active-bg', srcColors.bg);
+
+  // Count sounds per subcategory (from this source's sounds, respecting action filter + search)
+  var sourceSounds = SOUNDS.filter(function(s) {
+    if (s.source !== activeSource) return false;
+    if (activeAction && s.action !== activeAction) return false;
+    if (searchQuery) {
+      var hay = s.id.toLowerCase().replace(/_/g, ' ');
+      var tokens = searchQuery.toLowerCase().trim().split(/\s+/);
+      if (!tokens.every(function(t) { return hay.indexOf(t) !== -1; })) return false;
+    }
+    return true;
+  });
+  var subcatCounts = {};
+  sourceSounds.forEach(function(s) {
+    var sc = getSubcat(activeSource, s.entity);
+    subcatCounts[sc] = (subcatCounts[sc] || 0) + 1;
+  });
+
+  var totalSource = sourceSounds.length;
+  var srcMeta = SOURCE_META[activeSource];
+  var allLabel = 'All ' + (srcMeta ? srcMeta.label : activeSource);
+  var html = '<button class="subcat-pill' + (activeSubcat === null ? ' active' : '') + '" data-subcat="">' + allLabel + ' <span class="subcat-pill-count">' + totalSource + '</span></button>';
+  var subcatOrder = SOURCE_SUBCAT_ORDER[activeSource] || [];
+  var subcatIcons = SOURCE_SUBCAT_ICONS[activeSource] || {};
+  subcatOrder.forEach(function(sc) {
+    var count = subcatCounts[sc] || 0;
+    if (count === 0) return;
+    var icon = subcatIcons[sc] || '';
+    html += '<button class="subcat-pill' + (activeSubcat === sc ? ' active' : '') + '" data-subcat="' + sc + '">' +
+      icon + ' ' + sc +
+      ' <span class="subcat-pill-count">' + count + '</span></button>';
+  });
+  $subcatPills.innerHTML = html;
+
+  $subcatPills.querySelectorAll('.subcat-pill').forEach(function(el) {
+    el.addEventListener('click', function() {
+      var val = el.dataset.subcat;
+      activeSubcat = val === '' ? null : val;
+      renderSubcatPills();
+      renderCurrentView();
+    });
+  });
+}
+
+// ===== FILTERING =====
+function getFilteredSounds() {
+  return SOUNDS.filter(function(s) {
+    if (activeAction && s.action !== activeAction) return false;
+    if (activeSource && s.source !== activeSource) return false;
+    if (activeSubcat && (!sourceHasSubcats(s.source) || getSubcat(s.source, s.entity) !== activeSubcat)) return false;
+    if (activeZone) {
+      var zones = getSoundZones(s);
+      if (zones.indexOf(activeZone) === -1) return false;
+    }
+    if (searchQuery) {
+      var hay = s.id.toLowerCase().replace(/_/g, ' ');
+      var tokens = searchQuery.toLowerCase().trim().split(/\s+/);
+      if (!tokens.every(function(t) { return hay.indexOf(t) !== -1; })) return false;
+    }
+    return true;
+  });
+}
+
+// ===== SOUND ROW HTML =====
+function soundRowHTML(s) {
+  var tag = extractActionTag(s.id, s.entity);
+  return '<div class="sound-row" data-sfx="' + s.id + '" onclick="copyRow(this)">' +
+    '<span class="sfx">' + s.id + '</span>' +
+    '<span class="entity-tag">' + s.entity + '</span>' +
+    '<span class="action-tag ' + s.action + '">' + tag + '</span>' +
+    '<span class="copy-icon" onclick="event.stopPropagation();copyRow(this.parentElement)">' + COPY_SVG + '</span>' +
+    '</div>';
+}
+
+// ===== RENDER BY ACTION =====
+function renderByAction(sounds) {
+  // Group: action -> entity -> sounds[]
+  var groups = {};
+  ACTION_ORDER.forEach(function(a) { groups[a] = {}; });
+  sounds.forEach(function(s) {
+    if (!groups[s.action]) groups[s.action] = {};
+    if (!groups[s.action][s.entity]) groups[s.action][s.entity] = [];
+    groups[s.action][s.entity].push(s);
+  });
+
+  // Check if we should show subcategory labels within action groups
+  var showSubcatLabels = (activeSource && sourceHasSubcats(activeSource)) || activeSubcat;
+
+  var html = '';
+  var expandedCount = 0;
+  ACTION_ORDER.forEach(function(action) {
+    var entityMap = groups[action];
+    var entities = Object.keys(entityMap).sort();
+    if (entities.length === 0) return;
+    var total = 0;
+    entities.forEach(function(e) { total += entityMap[e].length; });
+
+    var expanded = expandedCount < 3;
+    expandedCount++;
+    var meta = ACTION_META[action];
+
+    html += '<div class="action-group' + (expanded ? '' : ' collapsed') + '" data-action="' + action + '">';
+    html += '<div class="action-group-header" onclick="toggleGroup(this.parentElement)">';
+    html += '<span class="action-group-dot" style="background:' + meta.color + ';"></span>';
+    html += '<span class="action-group-title">' + meta.label + '</span>';
+    html += '<span class="action-group-count">' + total + '</span>';
+    html += '<span class="action-group-chevron">' + CHEVRON_SVG + '</span>';
+    html += '</div>';
+    html += '<div class="action-group-body" data-rendered="' + (expanded ? 'true' : 'false') + '">';
+    if (expanded) {
+      html += renderActionGroupBody(entityMap, entities, showSubcatLabels);
+    }
+    html += '</div>';
+    html += '</div>';
+  });
+
+  $content.innerHTML = html;
+}
+
+// Render action group body content (shared between initial render and lazy expand)
+function renderActionGroupBody(entityMap, entities, showSubcatLabels) {
+  var html = '';
+  if (showSubcatLabels) {
+    // Determine which source we're grouping by
+    var subcatSource = activeSource && sourceHasSubcats(activeSource) ? activeSource : null;
+    var srcColors = subcatSource ? (SOURCE_SUBCAT_COLORS[subcatSource] || SOURCE_SUBCAT_COLORS.creature) : SOURCE_SUBCAT_COLORS.creature;
+    var subcatOrder = subcatSource ? (SOURCE_SUBCAT_ORDER[subcatSource] || []) : SOURCE_SUBCAT_ORDER.creature;
+    var subcatIcons = subcatSource ? (SOURCE_SUBCAT_ICONS[subcatSource] || {}) : SOURCE_SUBCAT_ICONS.creature;
+
+    // Group entities by subcategory within this action
+    var subcatEntities = {};
+    entities.forEach(function(entity) {
+      var firstSound = entityMap[entity][0];
+      var sc = (subcatSource && firstSound.source === subcatSource) ? getSubcat(subcatSource, entity) : '__no_subcat__';
+      if (!subcatEntities[sc]) subcatEntities[sc] = [];
+      subcatEntities[sc].push(entity);
+    });
+
+    subcatOrder.forEach(function(sc) {
+      var ents = subcatEntities[sc];
+      if (!ents || ents.length === 0) return;
+      var scTotal = 0;
+      ents.forEach(function(e) { scTotal += entityMap[e].length; });
+      var icon = subcatIcons[sc] || '';
+      html += '<div class="subcat-label" style="--subcat-color:' + srcColors.var + ';">';
+      html += '<span class="subcat-label-icon">' + icon + '</span>';
+      html += '<span class="subcat-label-title">' + sc + '</span>';
+      html += '<span class="subcat-label-count">' + scTotal + '</span>';
+      html += '</div>';
+      ents.forEach(function(entity) {
+        html += '<div class="entity-label">' + entity + '</div>';
+        entityMap[entity].forEach(function(s) {
+          html += soundRowHTML(s);
+        });
+      });
+    });
+    // Entities without subcategory classification
+    if (subcatEntities['__no_subcat__']) {
+      subcatEntities['__no_subcat__'].forEach(function(entity) {
+        html += '<div class="entity-label">' + entity + '</div>';
+        entityMap[entity].forEach(function(s) {
+          html += soundRowHTML(s);
+        });
+      });
+    }
+  } else {
+    entities.forEach(function(entity) {
+      html += '<div class="entity-label">' + entity + '</div>';
+      entityMap[entity].forEach(function(s) {
+        html += soundRowHTML(s);
+      });
+    });
+  }
+  return html;
+}
+
+// ===== RENDER BY ENTITY =====
+function renderByEntity(sounds) {
+  // Group by entity
+  var groups = {};
+  sounds.forEach(function(s) {
+    if (!groups[s.entity]) groups[s.entity] = [];
+    groups[s.entity].push(s);
+  });
+  var entities = Object.keys(groups).sort();
+
+  // Check if we should show subcategory grouping
+  var showSubcats = (activeSource && sourceHasSubcats(activeSource)) || activeSubcat;
+  // Also show subcats if all sounds share a single source with subcats
+  if (!showSubcats && !activeSource && sounds.length > 0) {
+    var firstSource = sounds[0].source;
+    var allSameSource = sounds.every(function(s) { return s.source === firstSource; });
+    if (allSameSource && sourceHasSubcats(firstSource)) showSubcats = true;
+  }
+
+  if (showSubcats) {
+    renderByEntityWithSubcats(sounds, groups, entities);
+    return;
+  }
+
+  var html = '';
+  entities.forEach(function(entity, idx) {
+    var list = groups[entity];
+    var expanded = idx < 10;
+
+    html += '<div class="action-group' + (expanded ? '' : ' collapsed') + '">';
+    html += '<div class="action-group-header" onclick="toggleGroup(this.parentElement)">';
+    html += '<span class="action-group-dot" style="background:var(--accent);"></span>';
+    html += '<span class="action-group-title">' + entity + '</span>';
+    html += '<span class="action-group-count">' + list.length + '</span>';
+    html += '<span class="action-group-chevron">' + CHEVRON_SVG + '</span>';
+    html += '</div>';
+    html += '<div class="action-group-body" data-rendered="' + (expanded ? 'true' : 'false') + '" data-entity="' + entity.replace(/"/g, '&quot;') + '">';
+    if (expanded) {
+      list.forEach(function(s) {
+        html += soundRowHTML(s);
+      });
+    }
+    html += '</div>';
+    html += '</div>';
+  });
+
+  $content.innerHTML = html;
+}
+
+// ===== RENDER BY ENTITY WITH SUBCATEGORY GROUPING =====
+function renderByEntityWithSubcats(sounds, groups, entities) {
+  // Determine which source to use for subcategory grouping
+  var subcatSource = activeSource && sourceHasSubcats(activeSource) ? activeSource : null;
+  if (!subcatSource && sounds.length > 0) {
+    var firstSource = sounds[0].source;
+    var allSameSource = sounds.every(function(s) { return s.source === firstSource; });
+    if (allSameSource && sourceHasSubcats(firstSource)) subcatSource = firstSource;
+  }
+
+  var srcColors = subcatSource ? (SOURCE_SUBCAT_COLORS[subcatSource] || SOURCE_SUBCAT_COLORS.creature) : SOURCE_SUBCAT_COLORS.creature;
+  var subcatOrder = subcatSource ? (SOURCE_SUBCAT_ORDER[subcatSource] || []) : SOURCE_SUBCAT_ORDER.creature;
+  var subcatIcons = subcatSource ? (SOURCE_SUBCAT_ICONS[subcatSource] || {}) : SOURCE_SUBCAT_ICONS.creature;
+
+  // Group entities by subcategory
+  var subcatEntities = {};
+  entities.forEach(function(entity) {
+    var firstSound = groups[entity][0];
+    var sc = (subcatSource && firstSound.source === subcatSource) ? getSubcat(subcatSource, entity) : '__no_subcat__';
+    if (!subcatEntities[sc]) subcatEntities[sc] = [];
+    subcatEntities[sc].push(entity);
+  });
+
+  var html = '';
+  var globalIdx = 0;
+
+  subcatOrder.forEach(function(sc) {
+    var ents = subcatEntities[sc];
+    if (!ents || ents.length === 0) return;
+
+    // Count total sounds in this subcategory
+    var subcatTotal = 0;
+    ents.forEach(function(e) { subcatTotal += groups[e].length; });
+
+    // Subcategory header
+    var icon = subcatIcons[sc] || '';
+    html += '<div class="subcat-header" style="--subcat-color:' + srcColors.var + ';">';
+    html += '<span class="subcat-header-icon">' + icon + '</span>';
+    html += '<span class="subcat-header-title">' + sc + '</span>';
+    html += '<span class="subcat-header-count">' + subcatTotal + ' sounds</span>';
+    html += '</div>';
+
+    // Entity groups within subcategory
+    ents.forEach(function(entity) {
+      var list = groups[entity];
+      var expanded = globalIdx < 10;
+      globalIdx++;
+
+      html += '<div class="action-group' + (expanded ? '' : ' collapsed') + '">';
+      html += '<div class="action-group-header" onclick="toggleGroup(this.parentElement)">';
+      html += '<span class="action-group-dot" style="background:' + srcColors.var + ';"></span>';
+      html += '<span class="action-group-title">' + entity + '</span>';
+      html += '<span class="action-group-count">' + list.length + '</span>';
+      html += '<span class="action-group-chevron">' + CHEVRON_SVG + '</span>';
+      html += '</div>';
+      html += '<div class="action-group-body" data-rendered="' + (expanded ? 'true' : 'false') + '" data-entity="' + entity.replace(/"/g, '&quot;') + '">';
+      if (expanded) {
+        list.forEach(function(s) {
+          html += soundRowHTML(s);
+        });
+      }
+      html += '</div>';
+      html += '</div>';
+    });
+  });
+
+  // Handle entities without subcategory classification
+  if (subcatEntities['__no_subcat__']) {
+    var ents = subcatEntities['__no_subcat__'];
+    ents.forEach(function(entity) {
+      var list = groups[entity];
+      var expanded = globalIdx < 10;
+      globalIdx++;
+
+      html += '<div class="action-group' + (expanded ? '' : ' collapsed') + '">';
+      html += '<div class="action-group-header" onclick="toggleGroup(this.parentElement)">';
+      html += '<span class="action-group-dot" style="background:var(--accent);"></span>';
+      html += '<span class="action-group-title">' + entity + '</span>';
+      html += '<span class="action-group-count">' + list.length + '</span>';
+      html += '<span class="action-group-chevron">' + CHEVRON_SVG + '</span>';
+      html += '</div>';
+      html += '<div class="action-group-body" data-rendered="' + (expanded ? 'true' : 'false') + '" data-entity="' + entity.replace(/"/g, '&quot;') + '">';
+      if (expanded) {
+        list.forEach(function(s) {
+          html += soundRowHTML(s);
+        });
+      }
+      html += '</div>';
+      html += '</div>';
+    });
+  }
+
+  $content.innerHTML = html;
+}
+
+// ===== TOGGLE GROUP (lazy rendering) =====
+function toggleGroup(group) {
+  var body = group.querySelector('.action-group-body');
+  var isCollapsed = group.classList.contains('collapsed');
+
+  if (isCollapsed) {
+    // Expand — render if not yet rendered
+    if (body.dataset.rendered === 'false') {
+      var action = group.dataset.action;
+      var entityAttr = body.dataset.entity;
+      var sounds = getFilteredSounds();
+      var html = '';
+
+      if (currentView === 'action' && action) {
+        // By action: group by entity within this action
+        var entityMap = {};
+        sounds.forEach(function(s) {
+          if (s.action !== action) return;
+          if (!entityMap[s.entity]) entityMap[s.entity] = [];
+          entityMap[s.entity].push(s);
+        });
+        var entities = Object.keys(entityMap).sort();
+        var showSubcatLabels = (activeSource && sourceHasSubcats(activeSource)) || activeSubcat;
+        html = renderActionGroupBody(entityMap, entities, showSubcatLabels);
+      } else if (entityAttr) {
+        // By entity: render sounds for this entity
+        sounds.forEach(function(s) {
+          if (s.entity === entityAttr) html += soundRowHTML(s);
+        });
+      }
+      body.innerHTML = html;
+      body.dataset.rendered = 'true';
+    }
+    group.classList.remove('collapsed');
+  } else {
+    group.classList.add('collapsed');
+  }
+}
+
+// ===== RENDER CURRENT VIEW =====
+function renderCurrentView() {
+  var sounds = getFilteredSounds();
+
+  // Update counter
+  if (searchQuery) {
+    $counterBadge.textContent = sounds.length + ' results';
+  } else {
+    $counterBadge.textContent = sounds.length + ' sounds';
+  }
+
+  // Update view info
+  if (currentView === 'action') {
+    $viewInfo.textContent = 'Grouped by action type';
+  } else {
+    if ((activeSource && sourceHasSubcats(activeSource)) || activeSubcat) {
+      var srcLabel = activeSource ? (SOURCE_META[activeSource] ? SOURCE_META[activeSource].label.toLowerCase() : activeSource) : 'entity';
+      $viewInfo.textContent = 'Grouped by ' + srcLabel + ' type';
+    } else {
+      $viewInfo.textContent = 'Grouped by entity name';
+    }
+  }
+
+  // Refresh subcategory pills (counts may change with search)
+  renderSubcatPills();
+
+  // Show/hide empty state
+  if (sounds.length === 0) {
+    $content.innerHTML = '';
+    $emptyState.classList.add('visible');
+    return;
+  } else {
+    $emptyState.classList.remove('visible');
+  }
+
+  if (currentView === 'action') {
+    renderByAction(sounds);
+  } else {
+    renderByEntity(sounds);
+  }
+}
+
+// ===== VIEW TOGGLE =====
+document.querySelectorAll('.view-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    currentView = btn.dataset.view;
+    document.querySelectorAll('.view-btn').forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    renderCurrentView();
+  });
+});
+
+// ===== SEARCH =====
+$search.addEventListener('input', function() {
+  searchQuery = $search.value;
+  renderCurrentView();
+});
+
+document.addEventListener('keydown', function(e) {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+    e.preventDefault();
+    $search.focus();
+  }
+  if (e.key === 'Escape' && document.activeElement === $search) {
+    $search.value = '';
+    searchQuery = '';
+    $search.blur();
+    renderCurrentView();
+  }
+});
+
+// ===== SUGGESTION PILLS =====
+document.querySelectorAll('.suggestion-pill').forEach(function(pill) {
+  pill.addEventListener('click', function() {
+    $search.value = pill.textContent;
+    searchQuery = pill.textContent;
+    $search.focus();
+    renderCurrentView();
+  });
+});
+
+// ===== COPY SYSTEM =====
+function formatCommand(sfxId) {
+  if (copyFormat === '2d') return '/sound 2d ' + sfxId;
+  if (copyFormat === '3d') return '/sound 3d ' + sfxId + ' ~ ~ ~';
+  return '"SoundEventId": "' + sfxId + '"';
+}
+
+function copyToClipboard(text) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    return navigator.clipboard.writeText(text);
+  }
+  var ta = document.createElement('textarea');
+  ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+  document.body.removeChild(ta); return Promise.resolve();
+}
+
+function copyRow(row) {
+  var sfx = row.dataset.sfx;
+  copyToClipboard(formatCommand(sfx)).then(function() {
+    var icon = row.querySelector('.copy-icon');
+    icon.innerHTML = CHECK_SVG;
+    icon.classList.add('copied');
+    showToast(formatCommand(sfx));
+    setTimeout(function() { icon.innerHTML = COPY_SVG; icon.classList.remove('copied'); }, 1500);
+  });
+}
+
+function showToast(cmd) {
+  $toast.innerHTML = '<span style="color:var(--success);margin-right:6px">&#10003;</span>' + cmd;
+  $toast.classList.add('visible');
+  setTimeout(function() { $toast.classList.remove('visible'); }, 2000);
+}
+
+// ===== HAMBURGER (mobile) =====
+function toggleSidebar() {
+  document.querySelector('.sidebar').classList.toggle('open');
+}
+
+document.getElementById('hamburger').addEventListener('click', function() {
+  toggleSidebar();
+});
+
+// Close sidebar when clicking outside on mobile
+document.addEventListener('click', function(e) {
+  if ($sidebar.classList.contains('open') && !$sidebar.contains(e.target) && e.target.id !== 'hamburger') {
+    $sidebar.classList.remove('open');
+  }
+});
+
+// ===== CONTEST BANNER =====
+
+// ===== MOBILE LONG-PRESS COPY POPUP =====
+var longPressTimer = null;
+function setupLongPress() {
+  if (window.innerWidth > 768) return;
+  document.addEventListener('touchstart', function(e) {
+    var row = e.target.closest('.sound-row');
+    if (!row) return;
+    longPressTimer = setTimeout(function() { showCopyPopup(row, e.touches[0]); }, 500);
+  });
+  document.addEventListener('touchend', function() { clearTimeout(longPressTimer); });
+  document.addEventListener('touchmove', function() { clearTimeout(longPressTimer); });
+}
+
+function showCopyPopup(row, touch) {
+  // Prevent normal copy
+  row.dataset.longPressed = 'true';
+  var sfx = row.dataset.sfx;
+  var popup = document.createElement('div');
+  popup.className = 'copy-popup';
+  popup.innerHTML =
+    '<div class="copy-popup-item" onclick="popupCopy(\'' + sfx + '\',\'2d\',this)">Copy /sound 2d</div>' +
+    '<div class="copy-popup-item" onclick="popupCopy(\'' + sfx + '\',\'3d\',this)">Copy /sound 3d</div>' +
+    '<div class="copy-popup-item" onclick="popupCopy(\'' + sfx + '\',\'json\',this)">Copy JSON</div>';
+  popup.style.top = touch.clientY + 'px';
+  popup.style.left = Math.min(touch.clientX, window.innerWidth - 180) + 'px';
+  document.body.appendChild(popup);
+
+  setTimeout(function() {
+    document.addEventListener('touchstart', function dismiss(e) {
+      if (!e.target.closest('.copy-popup')) {
+        popup.remove();
+        document.removeEventListener('touchstart', dismiss);
+      }
+    });
+  }, 10);
+}
+
+function popupCopy(sfx, fmt, el) {
+  var oldFmt = copyFormat;
+  copyFormat = fmt;
+  var cmd = formatCommand(sfx);
+  copyFormat = oldFmt;
+  copyToClipboard(cmd).then(function() {
+    showToast(cmd);
+    el.closest('.copy-popup').remove();
+  });
+}
+
+// ===== INIT =====
+function initCopyFormat() {
+  document.querySelectorAll('.sidebar-format').forEach(function(el) {
+    el.addEventListener('click', function() {
+      copyFormat = el.dataset.format;
+      document.querySelectorAll('.sidebar-format').forEach(function(f) { f.classList.remove('active'); });
+      el.classList.add('active');
+      // Show brief toast confirming format change
+      var labels = {'2d': '/sound 2d', '3d': '/sound 3d ~ ~ ~', 'json': 'JSON config'};
+      showToast('Copy format: ' + labels[copyFormat]);
+    });
+  });
+}
+
+function init() {
+  renderSidebar();
+  renderSourcePills();
+  renderCurrentView();
+  $search.placeholder = 'Search HySounds...';
+  initCopyFormat();
+  setupLongPress();
+  document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+  document.getElementById('ss-btn').addEventListener('click', function(e) {
+    e.stopPropagation();
+    var sw = document.getElementById('site-switcher');
+    var menu = document.getElementById('ss-menu');
+    sw.classList.toggle('open');
+    menu.classList.toggle('open');
+  });
+  document.addEventListener('click', function() {
+    document.getElementById('site-switcher').classList.remove('open');
+    document.getElementById('ss-menu').classList.remove('open');
+  });
+}
+init();
+
+// ===== CONTEST BANNER =====
+const bannerClose = document.getElementById('banner-close');
+const banner = document.getElementById('contest-banner');
+if (bannerClose && banner) {
+  if (localStorage.getItem('contest-banner-closed') === 'true') {
+    banner.style.display = 'none';
+  }
+  bannerClose.addEventListener('click', () => {
+    banner.style.display = 'none';
+    localStorage.setItem('contest-banner-closed', 'true');
+  });
+}
+</script>
+
+</body>
+</html>
